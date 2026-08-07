@@ -34,11 +34,56 @@ const FLOOR_ROOMS = {
 
 // Initial default bookings to test the "Already Booked" dialogue box
 const DEFAULT_BOOKINGS = {
-  '102': { name: 'Sarah Jenkins', nights: 3, date: '2026-07-24' },
-  '203': { name: 'Robert Chen', nights: 5, date: '2026-07-22' },
-  '301': { name: 'Elena Rostova', nights: 2, date: '2026-07-23' },
-  '402': { name: 'Lord Sterling', nights: 7, date: '2026-07-21' }
+  '102': { name: 'Sarah Jenkins', nights: 3, date: '2026-08-06' },
+  '203': { name: 'Robert Chen', nights: 5, date: '2026-08-07' },
+  '301': { name: 'Elena Rostova', nights: 2, date: '2026-08-04' },
+  '402': { name: 'Lord Sterling', nights: 7, date: '2026-08-10' }
 };
+
+// Helper to calculate stay progress relative to current local date
+function getStayStatus(checkInStr, nights) {
+  const totalNights = parseInt(nights, 10) || 0;
+  if (!checkInStr) {
+    return { paid: totalNights, left: totalNights, status: 'Unknown' };
+  }
+
+  // Parse check-in date parts directly to prevent timezone shift issues
+  const [inYear, inMonth, inDay] = checkInStr.split('-').map(Number);
+  const checkInDate = new Date(inYear, inMonth - 1, inDay);
+  
+  // Current local date (normalized to midnight)
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  
+  // Check-out date
+  const checkOutDate = new Date(checkInDate.getTime() + totalNights * 24 * 60 * 60 * 1000);
+  
+  if (today < checkInDate) {
+    // Stay is in the future
+    return {
+      paid: totalNights,
+      left: totalNights,
+      status: 'Upcoming'
+    };
+  } else if (today >= checkOutDate) {
+    // Stay is completed
+    return {
+      paid: totalNights,
+      left: 0,
+      status: 'Completed'
+    };
+  } else {
+    // Active stay
+    const diffTime = today.getTime() - checkInDate.getTime();
+    const elapsedNights = Math.floor(diffTime / (24 * 60 * 60 * 1000));
+    const leftNights = totalNights - elapsedNights;
+    return {
+      paid: totalNights,
+      left: Math.max(0, leftNights),
+      status: 'Active'
+    };
+  }
+}
 
 export default function RoomBooking() {
   const [activeFloor, setActiveFloor] = useState(1);
@@ -55,6 +100,7 @@ export default function RoomBooking() {
   // Form State
   const [guestName, setGuestName] = useState('');
   const [duration, setDuration] = useState(1);
+  const [checkInDate, setCheckInDate] = useState('');
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -68,6 +114,7 @@ export default function RoomBooking() {
     } else {
       setGuestName('');
       setDuration(1);
+      setCheckInDate(new Date().toISOString().split('T')[0]);
       setErrors({});
       setIsFormModalOpen(true);
     }
@@ -82,6 +129,9 @@ export default function RoomBooking() {
     if (duration <= 0) {
       newErrors.duration = 'Duration must be at least 1 night';
     }
+    if (!checkInDate) {
+      newErrors.checkInDate = 'Check-in date is required';
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -92,7 +142,7 @@ export default function RoomBooking() {
     const newBooking = {
       name: guestName,
       nights: parseInt(duration, 10),
-      date: new Date().toISOString().split('T')[0]
+      date: checkInDate
     };
 
     setBookings(prev => ({
@@ -222,7 +272,41 @@ export default function RoomBooking() {
 
                 <div>
                   <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', fontFamily: 'var(--font-serif)' }}>{room.type}</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>{room.description}</p>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: isBooked ? '0.5rem' : '1.5rem' }}>{room.description}</p>
+                  
+                  {isBooked && (() => {
+                    const booking = bookings[room.number];
+                    if (!booking) return null;
+                    const status = getStayStatus(booking.date, booking.nights);
+                    return (
+                      <div style={{
+                        marginTop: '0.8rem',
+                        marginBottom: '1.2rem',
+                        padding: '0.6rem 0.8rem',
+                        backgroundColor: 'var(--bg-tertiary)',
+                        borderLeft: '3px solid var(--color-gold)',
+                        fontSize: '0.8rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.2rem'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ color: 'var(--text-muted)' }}>Guest:</span>
+                          <strong style={{ color: 'var(--text-primary)' }}>{booking.name}</strong>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ color: 'var(--text-muted)' }}>Paid Duration:</span>
+                          <strong>{status.paid} Night(s)</strong>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ color: 'var(--text-muted)' }}>Duration Left:</span>
+                          <strong style={{ color: status.left > 0 ? 'var(--color-gold)' : 'var(--text-muted)' }}>
+                            {status.left} Night(s) ({status.status})
+                          </strong>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
@@ -283,16 +367,28 @@ export default function RoomBooking() {
                 <p style={{ marginBottom: '0.8rem', fontWeight: '500', color: 'var(--text-primary)' }}>
                   This room has already been reserved.
                 </p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '0.5rem 1rem', marginTop: '0.5rem' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Guest:</span>
-                  <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{bookings[selectedRoom.number]?.name || 'Anonymous Guest'}</span>
-                  
-                  <span style={{ color: 'var(--text-muted)' }}>Stay:</span>
-                  <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{bookings[selectedRoom.number]?.nights} Night(s)</span>
-                  
-                  <span style={{ color: 'var(--text-muted)' }}>Reserved:</span>
-                  <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{bookings[selectedRoom.number]?.date}</span>
-                </div>
+                {(() => {
+                  const booking = bookings[selectedRoom.number];
+                  if (!booking) return null;
+                  const status = getStayStatus(booking.date, booking.nights);
+                  return (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '0.5rem 1rem', marginTop: '0.5rem' }}>
+                      <span style={{ color: 'var(--text-muted)' }}>Guest:</span>
+                      <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{booking.name}</span>
+                      
+                      <span style={{ color: 'var(--text-muted)' }}>Check-in Date:</span>
+                      <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{booking.date}</span>
+                      
+                      <span style={{ color: 'var(--text-muted)' }}>Duration Paid:</span>
+                      <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{status.paid} Night(s)</span>
+                      
+                      <span style={{ color: 'var(--text-muted)' }}>Duration Left:</span>
+                      <span style={{ fontWeight: '600', color: status.left > 0 ? 'var(--color-gold)' : 'var(--text-muted)' }}>
+                        {status.left} Night(s) ({status.status})
+                      </span>
+                    </div>
+                  );
+                })()}
               </div>
 
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center', marginBottom: '1.5rem' }}>
@@ -356,6 +452,27 @@ export default function RoomBooking() {
                   {errors.guestName && (
                     <span style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.2rem', display: 'block' }}>
                       {errors.guestName}
+                    </span>
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" htmlFor="check-in-date">
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <Calendar size={14} /> Check-in Date
+                    </span>
+                  </label>
+                  <input
+                    type="date"
+                    id="check-in-date"
+                    className="form-input"
+                    value={checkInDate}
+                    min={new Date().toISOString().split('T')[0]}
+                    onChange={(e) => setCheckInDate(e.target.value)}
+                  />
+                  {errors.checkInDate && (
+                    <span style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.2rem', display: 'block' }}>
+                      {errors.checkInDate}
                     </span>
                   )}
                 </div>

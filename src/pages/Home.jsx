@@ -1,5 +1,33 @@
 import React, { useEffect } from 'react';
-import { Star, Award, Compass } from 'lucide-react';
+import { Star, Award, Compass, ArrowRight } from 'lucide-react';
+import WhatWeOffer from '../components/WhatWeOffer';
+
+const FLOORS = [
+  {
+    label: 'Floor 01',
+    title: 'Deluxe Sanctuary',
+    price: '$150/Night',
+    image: 'https://images.unsplash.com/photo-1611891487122-2075b96244e1?auto=format&fit=crop&q=80&w=800',
+    description: 'Designed for quiet comfort and effortless relaxation. Features custom king bedding, serene courtyard views, premium workspace, and modern bath amenities.',
+    highlights: ['King & Twin beds', 'Smart TV', 'Courtyard View', 'Walk-in Shower']
+  },
+  {
+    label: 'Floor 02',
+    title: 'Executive Suites',
+    price: '$280/Night',
+    image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800',
+    description: 'Generously proportioned layouts tailored for business and leisure. Indulge in a dedicated parlor lounge, double balconies, and luxury rain showers.',
+    highlights: ['Lounge Area', 'Double Balconies', 'Nespresso Machine', 'Soaking Tub']
+  },
+  {
+    label: 'Floor 03',
+    title: 'Premium Presidential',
+    price: '$490/Night',
+    image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=800',
+    description: 'The height of elite boutique lodging. Features a wrap-around sunset terrace, private dining parlor, custom cocktail bar, and exclusive butler service.',
+    highlights: ['Butler Service', 'Rooftop Terrace', 'Private Bar', 'Jacuzzi Bath']
+  }
+];
 
 export default function Home() {
   useEffect(() => {
@@ -187,6 +215,120 @@ export default function Home() {
               </div>
             </div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* ================= AMENITIES SECTION ================= */}
+      <WhatWeOffer />
+
+      {/* ================= SUITES PREVIEW SECTION ================= */}
+      <section id="suites-preview" className="section-padding" style={{ backgroundColor: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
+        <div className="container">
+          <div className="section-header">
+            <span className="section-subtitle">Prestigious Living</span>
+            <h2 className="section-title">Our Suites By Floor</h2>
+            <p style={{ maxWidth: '600px', margin: '0 auto', color: 'var(--text-secondary)' }}>
+              Explore our boutique chambers across floors 1 to 3, designed with meticulous precision and tailored luxury.
+            </p>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '2.5rem',
+            marginTop: '1rem'
+          }}>
+            {FLOORS.map((floor, index) => (
+              <div
+                key={index}
+                className="hover-gold-border"
+                style={{
+                  backgroundColor: 'var(--card-bg)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  boxShadow: 'var(--shadow-sm)',
+                  position: 'relative',
+                  transition: 'var(--transition-smooth)',
+                  overflow: 'hidden'
+                }}
+              >
+                {/* Image Container with Zoom effect */}
+                <div style={{ position: 'relative', height: '240px', overflow: 'hidden' }}>
+                  <img
+                    src={floor.image}
+                    alt={floor.title}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transition: 'transform 0.8s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+                    onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                  />
+                  <div style={{
+                    position: 'absolute',
+                    top: '1rem',
+                    left: '1rem',
+                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                    backdropFilter: 'blur(3px)',
+                    border: '1px solid var(--color-gold)',
+                    color: 'var(--color-gold)',
+                    padding: '0.4rem 1rem',
+                    fontSize: '0.7rem',
+                    fontWeight: '600',
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase'
+                  }}>
+                    {floor.label}
+                  </div>
+                </div>
+
+                {/* Card Details */}
+                <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1 }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.8rem' }}>
+                      <h3 style={{ fontSize: '1.4rem', fontFamily: 'var(--font-serif)', color: 'var(--text-primary)' }}>
+                        {floor.title}
+                      </h3>
+                      <span className="text-gold" style={{ fontSize: '1.1rem', fontWeight: '600', fontFamily: 'var(--font-serif)' }}>
+                        {floor.price}
+                      </span>
+                    </div>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginBottom: '1.5rem', lineHeight: '1.6', fontWeight: 300 }}>
+                      {floor.description}
+                    </p>
+                  </div>
+
+                  <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.2rem', marginTop: 'auto' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                      {floor.highlights.map((hl, idx) => (
+                        <span
+                          key={idx}
+                          style={{
+                            fontSize: '0.7rem',
+                            backgroundColor: 'var(--bg-tertiary)',
+                            color: 'var(--text-primary)',
+                            padding: '0.25rem 0.6rem',
+                            border: '1px solid var(--border-color)',
+                            display: 'inline-block'
+                          }}
+                        >
+                          {hl}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '4rem' }}>
+            <a href="#booking" className="btn-gold" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2.5rem', fontSize: '0.9rem' }}>
+              Book a Room <ArrowRight size={18} />
+            </a>
           </div>
         </div>
       </section>

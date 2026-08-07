@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Sun, Moon, MapPin, Phone, Mail, Award, Star, Compass, ShieldCheck } from 'lucide-react';
 import Home from './pages/Home';
-import AmenitiesPage from './pages/AmenitiesPage';
 import SuitesPage from './pages/SuitesPage';
 import EventsPage from './pages/EventsPage';
 
 function getPageFromHash(hash) {
   const id = hash.replace('#', '');
-  if (id === 'amenities') return 'amenities';
   if (id === 'booking') return 'suites';
   if (id === 'rent-space') return 'events';
   return 'home';
@@ -136,7 +134,6 @@ export default function App() {
       </header>
 
       {page === 'home' && <Home />}
-      {page === 'amenities' && <AmenitiesPage />}
       {page === 'suites' && <SuitesPage />}
       {page === 'events' && <EventsPage />}
 
