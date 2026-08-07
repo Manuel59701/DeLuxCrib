@@ -34,11 +34,14 @@ export default function Home() {
     const scrollToTarget = () => {
       const id = window.location.hash.replace('#', '');
       if (id && id !== 'home') {
-        const el = document.getElementById(id);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          return;
-        }
+        // Small delay to ensure DOM is fully rendered before scrolling
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 80);
+        return;
       }
       window.scrollTo({ top: 0 });
     };

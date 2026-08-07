@@ -88,7 +88,7 @@ function getStayStatus(checkInStr, nights) {
 export default function RoomBooking() {
   const [activeFloor, setActiveFloor] = useState(1);
   const [bookings, setBookings] = useState(() => {
-    const saved = localStorage.getItem('delux_crib_bookings');
+    const saved = localStorage.getItem('delux_crib_bookings_v2');
     return saved ? JSON.parse(saved) : DEFAULT_BOOKINGS;
   });
   
@@ -104,7 +104,7 @@ export default function RoomBooking() {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    localStorage.setItem('delux_crib_bookings', JSON.stringify(bookings));
+    localStorage.setItem('delux_crib_bookings_v2', JSON.stringify(bookings));
   }, [bookings]);
 
   const handleRoomClick = (room) => {
@@ -291,10 +291,6 @@ export default function RoomBooking() {
                         gap: '0.2rem'
                       }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span style={{ color: 'var(--text-muted)' }}>Guest:</span>
-                          <strong style={{ color: 'var(--text-primary)' }}>{booking.name}</strong>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                           <span style={{ color: 'var(--text-muted)' }}>Paid Duration:</span>
                           <strong>{status.paid} Night(s)</strong>
                         </div>
@@ -373,9 +369,6 @@ export default function RoomBooking() {
                   const status = getStayStatus(booking.date, booking.nights);
                   return (
                     <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '0.5rem 1rem', marginTop: '0.5rem' }}>
-                      <span style={{ color: 'var(--text-muted)' }}>Guest:</span>
-                      <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{booking.name}</span>
-                      
                       <span style={{ color: 'var(--text-muted)' }}>Check-in Date:</span>
                       <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{booking.date}</span>
                       
