@@ -29,7 +29,7 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('delux_crib_theme');
     if (saved) return saved === 'dark';
-    return false;
+    return true;
   });
 
   useEffect(() => {
