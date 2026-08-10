@@ -46,7 +46,6 @@ export default function App() {
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
   const [page, setPage] = useState(() => getPageFromHash(window.location.hash));
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -83,32 +82,8 @@ export default function App() {
     };
   }, [page, darkMode]);
 
-  // Top scroll progress bar
-  useEffect(() => {
-    const onScroll = () => {
-      const total = document.documentElement.scrollHeight - window.innerHeight;
-      setScrollProgress(total > 0 ? Math.min(100, (window.scrollY / total) * 100) : 0);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [page]);
-
   return (
     <div style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', transition: 'var(--transition-smooth)' }}>
-
-      {/* Scroll Progress Indicator */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        height: '3px',
-        width: `${scrollProgress}%`,
-        backgroundColor: 'var(--color-gold)',
-        zIndex: 1000,
-        transition: 'width 0.1s linear',
-        boxShadow: '0 0 6px rgba(212, 175, 55, 0.6)'
-      }} />
 
       {/* ================= HEADER / NAVBAR ================= */}
       <header style={{
@@ -152,7 +127,7 @@ export default function App() {
             className={menuOpen ? 'main-nav open' : 'main-nav'}
             style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}
           >
-            <a href="#about" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={() => setMenuOpen(false)}>
+            <a href="#hero" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={() => setMenuOpen(false)}>
               Home
             </a>
             <a href="#amenities" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={() => setMenuOpen(false)}>

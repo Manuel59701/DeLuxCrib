@@ -97,7 +97,7 @@ export default function RoomBooking() {
 
   // Form State
   const [guestName, setGuestName] = useState('');
-  const [duration, setDuration] = useState(1);
+  const [duration, setDuration] = useState('1');
   const [checkInDate, setCheckInDate] = useState('');
   const [errors, setErrors] = useState({});
 
@@ -107,7 +107,7 @@ export default function RoomBooking() {
       setIsBookedModalOpen(true);
     } else {
       setGuestName('');
-      setDuration(1);
+      setDuration('1');
       setCheckInDate(new Date().toISOString().split('T')[0]);
       setErrors({});
       setIsFormModalOpen(true);
@@ -120,8 +120,11 @@ export default function RoomBooking() {
     if (!guestName.trim()) {
       newErrors.guestName = 'Guest name is required';
     }
-    if (duration <= 0) {
-      newErrors.duration = 'Duration must be at least 1 night';
+    const parsedDuration = parseInt(duration, 10);
+    if (!duration.trim()) {
+      newErrors.duration = 'Duration is required';
+    } else if (parsedDuration <= 0 || parsedDuration > 30) {
+      newErrors.duration = 'Duration must be between 1 and 30 nights';
     }
     if (!checkInDate) {
       newErrors.checkInDate = 'Check-in date is required';
@@ -151,13 +154,14 @@ export default function RoomBooking() {
       roomNumber: selectedRoom.number,
       type: selectedRoom.type,
       name: guestName,
-      nights: duration,
+      nights: parsedDuration,
       date: checkInDate,
-      totalPrice: selectedRoom.price * duration
+      totalPrice: selectedRoom.price * parsedDuration
     });
   };
 
   const currentRooms = FLOOR_ROOMS[activeFloor] || [];
+  const nightsCount = parseInt(duration, 10) || 0;
 
   return (
     <section id="booking" className="section-padding bg-light-section" style={{ backgroundColor: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
@@ -465,16 +469,14 @@ export default function RoomBooking() {
                     </span>
                   </label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <input
-                      type="number"
-                      id="stay-duration"
-                      className="form-input"
-                      min="1"
-                      max="30"
-                      value={duration}
-                      onChange={(e) => setDuration(Math.max(1, parseInt(e.target.value, 10) || 0))}
-                      style={{ width: '80px', textAlign: 'center' }}
-                    />
+                  <input
+                    type="number"
+                    id="stay-duration"
+                    className="form-input"
+                    value={duration}
+                    onChange={(e) => setDuration(e.target.value.replace(/[^0-9]/g, ''))}
+                    style={{ width: '80px', textAlign: 'center' }}
+                  />
                     <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Nights</span>
                   </div>
                   {errors.duration && (
@@ -503,7 +505,7 @@ export default function RoomBooking() {
                   
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.8rem' }}>
                     <span>Nights</span>
-                    <span>x {duration}</span>
+                    <span>x {nightsCount}</span>
                   </div>
                   
                   <div style={{
@@ -520,7 +522,7 @@ export default function RoomBooking() {
                       <DollarSign size={16} className="text-gold" /> Total Cost
                     </span>
                     <span className="text-gold" style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem' }}>
-                      ${selectedRoom.price * duration}.00
+                      ${selectedRoom.price * nightsCount}.00
                     </span>
                   </div>
                 </div>
