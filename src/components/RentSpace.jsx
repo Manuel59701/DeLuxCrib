@@ -71,7 +71,7 @@ export default function RentSpace() {
   return (
     <section id="rent-space" className="section-padding bg-light-section" style={{ backgroundColor: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)' }}>
       <div className="container">
-        <div className="section-header">
+        <div className="section-header reveal">
           <span className="section-subtitle">Stately Venues</span>
           <h2 className="section-title">Rent A Space</h2>
           <p style={{ maxWidth: '600px', margin: '0 auto', color: 'var(--text-secondary)' }}>
@@ -87,6 +87,7 @@ export default function RentSpace() {
               <div
                 key={space.id}
                 onClick={() => setSelectedSpaceId(space.id)}
+                className="reveal"
                 style={{
                   backgroundColor: 'var(--card-bg)',
                   border: isSelected ? '2px solid var(--color-gold)' : '1px solid var(--border-color)',

@@ -177,7 +177,7 @@ export default function RoomBooking() {
   return (
     <section id="booking" className="section-padding bg-light-section" style={{ backgroundColor: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
       <div className="container">
-        <div className="section-header">
+        <div className="section-header reveal">
           <span className="section-subtitle">Exquisite Stays</span>
           <h2 className="section-title">Rooms & Suites</h2>
           <p style={{ maxWidth: '600px', margin: '0 auto', color: 'var(--text-secondary)' }}>
@@ -191,7 +191,7 @@ export default function RoomBooking() {
             <button
               key={floor}
               onClick={() => setActiveFloor(floor)}
-              className={activeFloor === floor ? 'btn-black' : 'btn-outline'}
+              className={activeFloor === floor ? 'btn-black floor-tab is-active' : 'btn-outline floor-tab'}
               style={{
                 borderRadius: '0',
                 padding: '0.6rem 1.5rem',
@@ -200,6 +200,18 @@ export default function RoomBooking() {
                 borderColor: activeFloor === floor ? 'var(--color-gold)' : 'var(--border-color)',
                 backgroundColor: activeFloor === floor ? 'var(--text-primary)' : 'transparent',
                 color: activeFloor === floor ? 'var(--bg-primary)' : 'var(--text-primary)'
+              }}
+              onMouseEnter={(e) => {
+                if (activeFloor !== floor) {
+                  e.currentTarget.style.borderColor = 'var(--color-gold)';
+                  e.currentTarget.style.color = 'var(--color-gold)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeFloor !== floor) {
+                  e.currentTarget.style.borderColor = 'var(--border-color)';
+                  e.currentTarget.style.color = 'var(--text-primary)';
+                }
               }}
             >
               {floor === 4 ? 'PENTHOUSE DECK' : `FLOOR 0${floor}`}
@@ -213,13 +225,13 @@ export default function RoomBooking() {
           gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
           gap: '2rem'
         }}>
-          {currentRooms.map(room => {
+          {currentRooms.map((room, index) => {
             const isBooked = !!bookings[room.number];
             return (
               <div
                 key={room.number}
                 onClick={() => handleRoomClick(room)}
-                className="hover-gold-border"
+                className={`hover-gold-border reveal room-card reveal-delay-${index % 3}`}
                 style={{
                   backgroundColor: 'var(--card-bg)',
                   padding: '2rem',
@@ -312,7 +324,7 @@ export default function RoomBooking() {
                       ${room.price}
                     </span>
                   </div>
-                  <span className="text-gold" style={{ fontSize: '0.8rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <span className="text-gold room-card-cta" style={{ fontSize: '0.8rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     {isBooked ? 'Details' : 'Book Suite →'}
                   </span>
                 </div>

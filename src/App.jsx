@@ -46,6 +46,7 @@ export default function App() {
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
   const [page, setPage] = useState(() => getPageFromHash(window.location.hash));
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     const onHashChange = () => setPage(getPageFromHash(window.location.hash));
@@ -53,9 +54,58 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
+  // Scroll-reveal animations: observe every .reveal element across the site
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    const observeAll = () => {
+      document.querySelectorAll('.reveal:not(.is-visible)').forEach(el => observer.observe(el));
+    };
+
+    observeAll();
+    const mutationObserver = new MutationObserver(observeAll);
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mutationObserver.disconnect();
+    };
+  }, [page, darkMode]);
+
+  // Top scroll progress bar
+  useEffect(() => {
+    const onScroll = () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(total > 0 ? Math.min(100, (window.scrollY / total) * 100) : 0);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [page]);
+
   return (
     <div style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', transition: 'var(--transition-smooth)' }}>
-      
+
+      {/* Scroll Progress Indicator */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        height: '3px',
+        width: `${scrollProgress}%`,
+        backgroundColor: 'var(--color-gold)',
+        zIndex: 1000,
+        transition: 'width 0.1s linear',
+        boxShadow: '0 0 6px rgba(212, 175, 55, 0.6)'
+      }} />
+
       {/* ================= HEADER / NAVBAR ================= */}
       <header style={{
         position: 'sticky',

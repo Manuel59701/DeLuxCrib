@@ -1,13 +1,56 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Star, Award, Compass, ArrowRight } from 'lucide-react';
 import WhatWeOffer from '../components/WhatWeOffer';
+
+const TESTIMONIALS = [
+  {
+    quote: "The penthouse booking process was flawless. The rooftop space holds spectacular 360 views that our event guests will talk about for months. Absolute grandeur.",
+    name: 'Victoria Sterling',
+    role: 'Founder, Sterling Ventures • Penthouse Guest'
+  },
+  {
+    quote: "If you enjoy the finer things in life, the Oak Bar and Snooker room are a must. Classic gentlemen's charm combined with incredible mixology.",
+    name: 'Sir Alistair Thorne',
+    role: 'Member, London Royal Club • Executive Suite Guest'
+  },
+  {
+    quote: "From check-in to check-out, the boutique vibe felt incredibly personalized. The dark mode toggle on their site shows the level of detail they appreciate.",
+    name: 'Marcus Peterson',
+    role: 'Creative Director • Deluxe Chamber Guest'
+  },
+  {
+    quote: "The heritage suite transported me to another era. Antique furnishings, gold accents, and a staff that anticipates your every need before you ask.",
+    name: 'Lady Genevieve Ashworth',
+    role: 'Event Hostess • Heritage Suite Guest'
+  },
+  {
+    quote: "We hosted our annual corporate summit in the Sovereign Boardroom. Flawless projection, discreet service, and catering that impressed our most demanding partners.",
+    name: 'Jonathan Hale',
+    role: 'CEO, Hale Capital • Boardroom Client'
+  },
+  {
+    quote: "As a travel journalist, I have slept in hundreds of hotels. The bespoke bedding and silent chambers here are unmatched anywhere in the city.",
+    name: 'Isabella Romano',
+    role: 'Travel & Lifestyle Journalist • Deluxe Chamber Guest'
+  },
+  {
+    quote: "For our anniversary, the Vortex Sky Deck was pure magic. Fire pits under the stars, a private mixologist, and a sunset that belonged to us alone.",
+    name: 'Duke Emmanuel Osei',
+    role: 'Diplomatic Guest • Rooftop Lounge Reservation'
+  },
+  {
+    quote: "I planned a 120-guest wedding at the Grand Gala Hall. The coordination team treated it like a royal affair, and every single detail was flawless.",
+    name: 'Charlotte Whitmore',
+    role: 'Celebrity Wedding Planner • Gala Hall Client'
+  }
+];
 
 const FLOORS = [
   {
     label: 'Floor 01',
     title: 'Deluxe Sanctuary',
     price: '$150/Night',
-    image: 'https://images.unsplash.com/photo-1611891487122-2075b96244e1?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=800',
     description: 'Designed for quiet comfort and effortless relaxation. Features custom king bedding, serene courtyard views, premium workspace, and modern bath amenities.',
     highlights: ['King & Twin beds', 'Smart TV', 'Courtyard View', 'Walk-in Shower']
   },
@@ -50,22 +93,61 @@ export default function Home() {
     return () => window.removeEventListener('hashchange', scrollToTarget);
   }, []);
 
+  // Auto-scroll the testimonials track (smooth, pauses while dragging or hovering)
+  const trackRef = useRef(null);
+  const isDown = useRef(false);
+  const isHovering = useRef(false);
+  const startX = useRef(0);
+  const startScroll = useRef(0);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    let rafId;
+    let last = performance.now();
+    const speed = 0.1; // px per ms
+    const step = (now) => {
+      const dt = Math.min(now - last, 100);
+      last = now;
+      if (!isDown.current && !isHovering.current) {
+        track.scrollLeft += speed * dt;
+        const half = track.scrollWidth / 2;
+        if (track.scrollLeft >= half) {
+          track.scrollLeft -= half;
+        }
+      }
+      rafId = requestAnimationFrame(step);
+    };
+    rafId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
+
+  const handleMouseDown = (e) => {
+    const track = trackRef.current;
+    if (!track) return;
+    isDown.current = true;
+    startX.current = e.pageX - track.offsetLeft;
+    startScroll.current = track.scrollLeft;
+  };
+
+  const handleMouseMove = (e) => {
+    const track = trackRef.current;
+    if (!isDown.current || !track) return;
+    e.preventDefault();
+    const x = e.pageX - track.offsetLeft;
+    const walk = (x - startX.current) * 1.2;
+    track.scrollLeft = startScroll.current - walk;
+  };
+
+  const endDrag = () => { isDown.current = false; };
+
   return (
     <>
       {/* ================= HERO SECTION ================= */}
-      <section id="hero" style={{
-        position: 'relative',
-        height: '90vh',
-        background: 'linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.55)), url("https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=1600") no-repeat center center',
-        backgroundSize: 'cover',
-        display: 'flex',
-        alignItems: 'center',
-        color: '#ffffff',
-        textAlign: 'center'
-      }}>
+      <section id="hero" className="hero-section">
         <div className="container" style={{ width: '100%' }}>
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-            <span style={{
+            <span className="hero-fade-up hero-fade-up-1" style={{
               display: 'block',
               textTransform: 'uppercase',
               letterSpacing: '0.3em',
@@ -76,7 +158,7 @@ export default function Home() {
             }}>
               Uncompromising Grandeur
             </span>
-            <h1 style={{
+            <h1 className="hero-fade-up hero-fade-up-2" style={{
               fontSize: '4.5rem',
               fontFamily: 'var(--font-serif)',
               fontWeight: 500,
@@ -86,7 +168,7 @@ export default function Home() {
             }}>
               Where Luxury Meets Heritage
             </h1>
-            <p style={{
+            <p className="hero-fade-up hero-fade-up-3" style={{
               fontSize: '1.1rem',
               fontWeight: 300,
               letterSpacing: '0.05em',
@@ -96,7 +178,7 @@ export default function Home() {
             }}>
               De Lux Crib boutique chambers offer refined comfort, curated recreation spaces, and executive lounges. Elevate your lodging standards.
             </p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
+            <div className="hero-fade-up hero-fade-up-4" style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
               <a href="#booking" className="btn-gold" style={{ border: '1px solid var(--color-gold)' }}>
                 Secure A Chamber
               </a>
@@ -155,7 +237,7 @@ export default function Home() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}>
             
             {/* Left Image grid */}
-            <div style={{ position: 'relative' }}>
+            <div className="reveal" style={{ position: 'relative' }}>
               <div style={{ border: '2px solid var(--color-gold)', padding: '1rem', position: 'relative' }}>
                 <img
                   src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800"
@@ -163,7 +245,7 @@ export default function Home() {
                   style={{ width: '100%', height: 'auto', display: 'block' }}
                 />
               </div>
-              <div style={{
+              <div className="float-animate" style={{
                 position: 'absolute',
                 bottom: '-2rem',
                 right: '-2rem',
@@ -186,7 +268,7 @@ export default function Home() {
             </div>
 
             {/* Right text */}
-            <div style={{ textAlign: 'left' }}>
+            <div className="reveal reveal-delay-1" style={{ textAlign: 'left' }}>
               <span className="text-gold" style={{ fontSize: '0.8rem', fontWeight: '600', letterSpacing: '0.2em', textTransform: 'uppercase', display: 'block', marginBottom: '0.5rem' }}>
                 Premium Standard
               </span>
@@ -228,7 +310,7 @@ export default function Home() {
       {/* ================= SUITES PREVIEW SECTION ================= */}
       <section id="suites-preview" className="section-padding" style={{ backgroundColor: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
         <div className="container">
-          <div className="section-header">
+          <div className="section-header reveal">
             <span className="section-subtitle">Prestigious Living</span>
             <h2 className="section-title">Our Suites By Floor</h2>
             <p style={{ maxWidth: '600px', margin: '0 auto', color: 'var(--text-secondary)' }}>
@@ -245,7 +327,7 @@ export default function Home() {
             {FLOORS.map((floor, index) => (
               <div
                 key={index}
-                className="hover-gold-border"
+                className={`hover-gold-border reveal reveal-delay-${index % 3}`}
                 style={{
                   backgroundColor: 'var(--card-bg)',
                   display: 'flex',
@@ -339,108 +421,50 @@ export default function Home() {
       {/* ================= REVIEWS & TESTIMONIALS SECTION ================= */}
       <section id="testimonials" className="section-padding" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="container">
-          <div className="section-header">
+          <div className="section-header reveal">
             <span className="section-subtitle">Exemplary Feedback</span>
             <h2 className="section-title">Royal Testimonials</h2>
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '2rem'
-          }}>
-            {/* Card 1 */}
-            <div style={{
-              backgroundColor: 'var(--bg-secondary)',
-              padding: '2.5rem',
-              border: '1px solid var(--border-color)',
-              position: 'relative',
-              boxShadow: 'var(--shadow-sm)'
-            }}>
-              <div style={{ display: 'flex', color: 'var(--color-gold)', marginBottom: '1rem' }}>
-                <Star size={16} fill="var(--color-gold)" />
-                <Star size={16} fill="var(--color-gold)" />
-                <Star size={16} fill="var(--color-gold)" />
-                <Star size={16} fill="var(--color-gold)" />
-                <Star size={16} fill="var(--color-gold)" />
+          <div
+            ref={trackRef}
+            className="testimonials-track"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={endDrag}
+            onMouseLeave={endDrag}
+            onMouseEnter={() => { isHovering.current = true; }}
+            onMouseLeave={() => { isHovering.current = false; endDrag(); }}
+          >
+            {TESTIMONIALS.concat(TESTIMONIALS).map((t, index) => (
+              <div
+                key={index}
+                className="testimonial-card"
+                {...(index >= TESTIMONIALS.length ? { 'aria-hidden': 'true' } : {})}
+              >
+                <div style={{ display: 'flex', color: 'var(--color-gold)', marginBottom: '1rem' }}>
+                  <Star size={16} fill="var(--color-gold)" />
+                  <Star size={16} fill="var(--color-gold)" />
+                  <Star size={16} fill="var(--color-gold)" />
+                  <Star size={16} fill="var(--color-gold)" />
+                  <Star size={16} fill="var(--color-gold)" />
+                </div>
+                <p style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: '1.1rem',
+                  fontStyle: 'italic',
+                  marginBottom: '1.5rem',
+                  color: 'var(--text-primary)',
+                  lineHeight: '1.6'
+                }}>
+                  "{t.quote}"
+                </p>
+                <div>
+                  <strong style={{ fontSize: '0.9rem', display: 'block', color: 'var(--text-primary)' }}>{t.name}</strong>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{t.role}</span>
+                </div>
               </div>
-              <p style={{
-                fontFamily: 'var(--font-serif)',
-                fontSize: '1.1rem',
-                fontStyle: 'italic',
-                marginBottom: '1.5rem',
-                color: 'var(--text-primary)',
-                lineHeight: '1.6'
-              }}>
-                "The penthouse booking process was flawless. The rooftop space holds spectacular 360 views that our event guests will talk about for months. Absolute grandeur."
-              </p>
-              <div>
-                <strong style={{ fontSize: '0.9rem', display: 'block', color: 'var(--text-primary)' }}>Victoria Sterling</strong>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Founder, Sterling Ventures &bull; Penthouse Guest</span>
-              </div>
-            </div>
-
-            {/* Card 2 */}
-            <div style={{
-              backgroundColor: 'var(--bg-secondary)',
-              padding: '2.5rem',
-              border: '1px solid var(--border-color)',
-              position: 'relative',
-              boxShadow: 'var(--shadow-sm)'
-            }}>
-              <div style={{ display: 'flex', color: 'var(--color-gold)', marginBottom: '1rem' }}>
-                <Star size={16} fill="var(--color-gold)" />
-                <Star size={16} fill="var(--color-gold)" />
-                <Star size={16} fill="var(--color-gold)" />
-                <Star size={16} fill="var(--color-gold)" />
-                <Star size={16} fill="var(--color-gold)" />
-              </div>
-              <p style={{
-                fontFamily: 'var(--font-serif)',
-                fontSize: '1.1rem',
-                fontStyle: 'italic',
-                marginBottom: '1.5rem',
-                color: 'var(--text-primary)',
-                lineHeight: '1.6'
-              }}>
-                "If you enjoy the finer things in life, the Oak Bar and Snooker room are a must. Classic gentlemen's charm combined with incredible mixology."
-              </p>
-              <div>
-                <strong style={{ fontSize: '0.9rem', display: 'block', color: 'var(--text-primary)' }}>Sir Alistair Thorne</strong>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Member, London Royal Club &bull; Executive Suite Guest</span>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div style={{
-              backgroundColor: 'var(--bg-secondary)',
-              padding: '2.5rem',
-              border: '1px solid var(--border-color)',
-              position: 'relative',
-              boxShadow: 'var(--shadow-sm)'
-            }}>
-              <div style={{ display: 'flex', color: 'var(--color-gold)', marginBottom: '1rem' }}>
-                <Star size={16} fill="var(--color-gold)" />
-                <Star size={16} fill="var(--color-gold)" />
-                <Star size={16} fill="var(--color-gold)" />
-                <Star size={16} fill="var(--color-gold)" />
-                <Star size={16} fill="var(--color-gold)" />
-              </div>
-              <p style={{
-                fontFamily: 'var(--font-serif)',
-                fontSize: '1.1rem',
-                fontStyle: 'italic',
-                marginBottom: '1.5rem',
-                color: 'var(--text-primary)',
-                lineHeight: '1.6'
-              }}>
-                "From check-in to check-out, the boutique vibe felt incredibly personalized. The dark mode toggle on their site shows the level of detail they appreciate."
-              </p>
-              <div>
-                <strong style={{ fontSize: '0.9rem', display: 'block', color: 'var(--text-primary)' }}>Marcus Peterson</strong>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Creative Director &bull; Deluxe Chamber Guest</span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>

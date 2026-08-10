@@ -27,7 +27,7 @@ const OFFERS = [
     title: 'Imperial Snooker Room',
     subtitle: 'Gentlemen’s Club Charm & Recreation',
     description: 'Featuring two full-sized custom mahogany tables, tournament-grade cloth, handmade cues, and dedicated refreshments bar. A refined space for classy competition.',
-    image: 'https://images.unsplash.com/photo-1544192240-4a34fed0104c?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.pexels.com/photos/7404545/pexels-photo-7404545.jpeg?auto=compress&cs=tinysrgb&w=800',
     hours: '12:00 PM - Midnight',
     location: 'Basement Arcade',
     features: ['Bespoke Snooker Tables', 'Private Scoring Display', 'Dedicated Host', 'Single Malt Cart']
@@ -48,7 +48,7 @@ export default function WhatWeOffer() {
   return (
     <section id="amenities" className="section-padding" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="container">
-        <div className="section-header">
+        <div className="section-header reveal">
           <span className="section-subtitle">A World of Indulgence</span>
           <h2 className="section-title">What We Offer</h2>
           <p style={{ maxWidth: '600px', margin: '0 auto', color: 'var(--text-secondary)' }}>
@@ -65,7 +65,7 @@ export default function WhatWeOffer() {
           {OFFERS.map(offer => (
             <div
               key={offer.id}
-              className="hover-gold-border"
+              className="hover-gold-border reveal"
               style={{
                 backgroundColor: 'var(--bg-secondary)',
                 display: 'flex',
