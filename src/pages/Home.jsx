@@ -14,7 +14,7 @@ const TESTIMONIALS = [
     role: 'Member, London Royal Club • Executive Suite Guest'
   },
   {
-    quote: "From check-in to check-out, the boutique vibe felt incredibly personalized. The dark mode toggle on their site shows the level of detail they appreciate.",
+    quote: "From check-in to check-out, the hotel experience felt incredibly personalized. The dark mode toggle on their site shows the level of detail they appreciate.",
     name: 'Marcus Peterson',
     role: 'Creative Director • Deluxe Chamber Guest'
   },
@@ -67,7 +67,7 @@ const FLOORS = [
     title: 'Premium Presidential',
     price: '$490/Night',
     image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=800',
-    description: 'The height of elite boutique lodging. Features a wrap-around sunset terrace, private dining parlor, custom cocktail bar, and exclusive butler service.',
+    description: 'The height of elite luxury lodging. Features a wrap-around sunset terrace, private dining parlor, custom cocktail bar, and exclusive butler service.',
     highlights: ['Butler Service', 'Rooftop Terrace', 'Private Bar', 'Jacuzzi Bath']
   }
 ];
@@ -176,7 +176,7 @@ export default function Home() {
               opacity: 0.9,
               lineHeight: '1.6'
             }}>
-              De Lux Crib boutique chambers offer refined comfort, curated recreation spaces, and executive lounges. Elevate your lodging standards.
+              De Lux Crib chambers offer refined comfort, curated recreation spaces, and executive lounges. Elevate your lodging standards.
             </p>
             <div className="hero-fade-up hero-fade-up-4" style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
               <a href="#booking" className="btn-gold" style={{ border: '1px solid var(--color-gold)' }}>
@@ -262,7 +262,7 @@ export default function Home() {
                   <Star size={16} fill="var(--color-gold)" />
                   <Star size={16} fill="var(--color-gold)" />
                 </div>
-                <strong style={{ fontSize: '0.9rem', display: 'block', color: 'var(--text-primary)' }}>Best Boutique Hotel</strong>
+                <strong style={{ fontSize: '0.9rem', display: 'block', color: 'var(--text-primary)' }}>Best Luxury Hotel</strong>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Heritage Hospitality Award 2026</span>
               </div>
             </div>
@@ -276,7 +276,7 @@ export default function Home() {
                 A Sophisticated Oasis In The Heart of The City
               </h2>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', lineHeight: '1.8' }}>
-                For those who expect more from travel. De Lux Crib blends royal classical hospitality with contemporary design accents. Built for royalty and business executives alike, our boutique rooms ensure quiet relaxation, private entries, and luxury linen.
+                For those who expect more from travel. De Lux Crib blends royal classical hospitality with contemporary design accents. Built for royalty and business executives alike, our rooms ensure quiet relaxation, private entries, and luxury linen.
               </p>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', lineHeight: '1.8' }}>
                 Whether you seek to lounge in our velvet room, play snooker under classic chandeliers, sip single malts at the oak bar, or toast skyline sunsets on our rooftop garden terrace, we guarantee a flawless stay.
@@ -314,7 +314,7 @@ export default function Home() {
             <span className="section-subtitle">Prestigious Living</span>
             <h2 className="section-title">Our Suites By Floor</h2>
             <p style={{ maxWidth: '600px', margin: '0 auto', color: 'var(--text-secondary)' }}>
-              Explore our boutique chambers across floors 1 to 3, designed with meticulous precision and tailored luxury.
+              Explore our suites across floors 1 to 3, designed with meticulous precision and tailored luxury.
             </p>
           </div>
 

@@ -42,7 +42,7 @@ export async function downloadBookingReceipt(booking) {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
-  doc.text('BOUTIQUE HOTEL & SUITES', margin, 68);
+  doc.text('HOTEL & SUITES', margin, 68);
   doc.text('777 GOLDEN BOULEVARD • CONCIERGE@DELUXCRIB.COM', margin, 80);
 
   doc.setFont('times', 'bold');

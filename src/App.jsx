@@ -143,7 +143,7 @@ export default function App() {
               color: 'var(--text-secondary)',
               textTransform: 'uppercase'
             }}>
-              Boutique Hotel & Suites
+              Hotel & Suites
             </span>
           </a>
 
@@ -235,7 +235,7 @@ export default function App() {
                 DE LUX CRIB
               </span>
               <p style={{ color: '#aaaaaa', fontSize: '0.8rem', lineHeight: '1.6', marginBottom: '1.5rem', maxWidth: '280px' }}>
-                An elite luxury boutique hotel and event spaces offering bespoke recreational chambers, a grand snooker den, and panoramic sunset skyline terraces.
+                An elite luxury hotel and suites offering bespoke recreational chambers, a grand snooker den, and panoramic sunset skyline terraces.
               </p>
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <a href="#" style={{ color: 'var(--color-gold)' }} aria-label="Facebook"><FacebookIcon size={18} /></a>

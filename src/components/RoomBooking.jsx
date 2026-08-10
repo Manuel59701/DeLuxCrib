@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ShieldAlert, CheckCircle, Calendar, User, Clock, DollarSign, Printer, X } from 'lucide-react';
 import { downloadBookingReceipt } from '../utils/receipt';
 
@@ -88,10 +88,7 @@ function getStayStatus(checkInStr, nights) {
 
 export default function RoomBooking() {
   const [activeFloor, setActiveFloor] = useState(1);
-  const [bookings, setBookings] = useState(() => {
-    const saved = localStorage.getItem('delux_crib_bookings_v2');
-    return saved ? JSON.parse(saved) : DEFAULT_BOOKINGS;
-  });
+  const [bookings, setBookings] = useState(DEFAULT_BOOKINGS);
   
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [isBookedModalOpen, setIsBookedModalOpen] = useState(false);
@@ -103,10 +100,6 @@ export default function RoomBooking() {
   const [duration, setDuration] = useState(1);
   const [checkInDate, setCheckInDate] = useState('');
   const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    localStorage.setItem('delux_crib_bookings_v2', JSON.stringify(bookings));
-  }, [bookings]);
 
   const handleRoomClick = (room) => {
     setSelectedRoom(room);
