@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldAlert, CheckCircle, Calendar, User, Clock, DollarSign, X } from 'lucide-react';
+import { ShieldAlert, CheckCircle, Calendar, User, Clock, DollarSign, Printer, X } from 'lucide-react';
+import { downloadBookingReceipt } from '../utils/receipt';
 
 const FLOOR_ROOMS = {
   1: [
@@ -158,18 +159,9 @@ export default function RoomBooking() {
       type: selectedRoom.type,
       name: guestName,
       nights: duration,
+      date: checkInDate,
       totalPrice: selectedRoom.price * duration
     });
-  };
-
-  const cancelBooking = (roomNumber) => {
-    const confirmCancel = window.confirm(`Are you sure you want to release Room ${roomNumber}?`);
-    if (confirmCancel) {
-      const updated = { ...bookings };
-      delete updated[roomNumber];
-      setBookings(updated);
-      setIsBookedModalOpen(false);
-    }
   };
 
   const currentRooms = FLOOR_ROOMS[activeFloor] || [];
@@ -408,15 +400,6 @@ export default function RoomBooking() {
                 >
                   Choose Another Room
                 </button>
-                
-                <button
-                  onClick={() => cancelBooking(selectedRoom.number)}
-                  className="btn-outline"
-                  style={{ padding: '0.8rem', borderColor: '#f87171', color: '#f87171' }}
-                  title="Demo feature: release this room"
-                >
-                  Release Booking
-                </button>
               </div>
             </div>
           </div>
@@ -624,13 +607,22 @@ export default function RoomBooking() {
                 </div>
               </div>
 
-              <button
-                onClick={() => setSuccessBooking(null)}
-                className="btn-black"
-                style={{ width: '100%', padding: '0.8rem' }}
-              >
-                Return to Rooms
-              </button>
+              <div className="modal-btn-row" style={{ display: 'flex', gap: '1rem' }}>
+                <button
+                  onClick={() => downloadBookingReceipt(successBooking)}
+                  className="btn-gold"
+                  style={{ flex: 1, padding: '0.8rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                >
+                  <Printer size={16} /> Print Receipt
+                </button>
+                <button
+                  onClick={() => setSuccessBooking(null)}
+                  className="btn-black"
+                  style={{ flex: 1, padding: '0.8rem' }}
+                >
+                  Return to Rooms
+                </button>
+              </div>
             </div>
           </div>
         )}
