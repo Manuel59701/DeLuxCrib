@@ -56,7 +56,7 @@ export default function WhatWeOffer() {
           </p>
         </div>
 
-        <div style={{
+        <div className="offer-grid" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(500px, 1fr))',
           gap: '3rem',
@@ -77,7 +77,7 @@ export default function WhatWeOffer() {
               }}
             >
               {/* Image Container with Zoom effect */}
-              <div style={{
+              <div className="offer-card-image" style={{
                 position: 'relative',
                 height: '300px',
                 overflow: 'hidden'
@@ -113,7 +113,7 @@ export default function WhatWeOffer() {
               </div>
 
               {/* Text details */}
-              <div style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1 }}>
+              <div className="offer-card-details" style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1 }}>
                 <div>
                   <span className="text-gold" style={{ fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '0.5rem' }}>
                     {offer.subtitle}

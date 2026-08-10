@@ -234,7 +234,7 @@ export default function Home() {
       {/* ================= ABOUT / HERITAGE SECTION ================= */}
       <section id="about" className="section-padding">
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}>
+          <div className="about-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}>
             
             {/* Left Image grid */}
             <div className="reveal" style={{ position: 'relative' }}>
@@ -282,7 +282,7 @@ export default function Home() {
                 Whether you seek to lounge in our velvet room, play snooker under classic chandeliers, sip single malts at the oak bar, or toast skyline sunsets on our rooftop garden terrace, we guarantee a flawless stay.
               </p>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem' }}>
+              <div className="about-badges" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem' }}>
                 <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
                   <Award size={24} className="text-gold" />
                   <div>
@@ -318,7 +318,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div style={{
+          <div className="suites-grid" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
             gap: '2.5rem',
@@ -371,7 +371,7 @@ export default function Home() {
                 </div>
 
                 {/* Card Details */}
-                <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1 }}>
+                <div className="suite-card-details" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1 }}>
                   <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.8rem' }}>
                       <h3 style={{ fontSize: '1.4rem', fontFamily: 'var(--font-serif)', color: 'var(--text-primary)' }}>

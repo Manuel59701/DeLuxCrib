@@ -186,7 +186,7 @@ export default function RoomBooking() {
         </div>
 
         {/* Floor Navigation Tabs */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
+        <div className="floor-tabs" style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
           {[1, 2, 3, 4].map(floor => (
             <button
               key={floor}
@@ -220,7 +220,7 @@ export default function RoomBooking() {
         </div>
 
         {/* Room Grid */}
-        <div style={{
+        <div className="room-grid" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
           gap: '2rem'
@@ -400,7 +400,7 @@ export default function RoomBooking() {
                 Please choose another suite on Floor 0{activeFloor} or check other floors for available vacancies.
               </p>
 
-              <div style={{ display: 'flex', gap: '1rem' }}>
+              <div className="modal-btn-row" style={{ display: 'flex', gap: '1rem' }}>
                 <button
                   onClick={() => setIsBookedModalOpen(false)}
                   className="btn-black"
@@ -549,7 +549,7 @@ export default function RoomBooking() {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '1rem' }}>
+                <div className="modal-btn-row" style={{ display: 'flex', gap: '1rem' }}>
                   <button
                     type="button"
                     onClick={() => setIsFormModalOpen(false)}

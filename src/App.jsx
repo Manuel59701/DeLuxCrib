@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sun, Moon, MapPin, Phone, Mail, Award, Star, Compass, ShieldCheck } from 'lucide-react';
+import { Sun, Moon, MapPin, Phone, Mail, Menu, X } from 'lucide-react';
 import Home from './pages/Home';
 import SuitesPage from './pages/SuitesPage';
 import EventsPage from './pages/EventsPage';
@@ -47,9 +47,13 @@ export default function App() {
 
   const [page, setPage] = useState(() => getPageFromHash(window.location.hash));
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onHashChange = () => setPage(getPageFromHash(window.location.hash));
+    const onHashChange = () => {
+      setPage(getPageFromHash(window.location.hash));
+      setMenuOpen(false);
+    };
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
@@ -123,7 +127,7 @@ export default function App() {
           alignItems: 'center'
         }}>
           {/* Logo */}
-          <a href="#hero" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <a href="#hero" onClick={() => setMenuOpen(false)} style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
             <span style={{
               fontFamily: 'var(--font-serif)',
               fontSize: '1.6rem',
@@ -144,26 +148,30 @@ export default function App() {
           </a>
 
           {/* Navigation Links */}
-          <nav style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-            <a href="#about" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link">
+          <nav
+            className={menuOpen ? 'main-nav open' : 'main-nav'}
+            style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}
+          >
+            <a href="#about" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={() => setMenuOpen(false)}>
               Home
             </a>
-            <a href="#amenities" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link">
+            <a href="#amenities" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={() => setMenuOpen(false)}>
               Amenities
             </a>
-            <a href="#booking" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link">
+            <a href="#booking" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={() => setMenuOpen(false)}>
               Suites
             </a>
-            <a href="#rent-space" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link">
+            <a href="#rent-space" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={() => setMenuOpen(false)}>
               Events
             </a>
-            <a href="#testimonials" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link">
+            <a href="#testimonials" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={() => setMenuOpen(false)}>
               Reviews
             </a>
             
             {/* Theme Toggle Button */}
             <button
               onClick={toggleDarkMode}
+              className="theme-toggle-btn"
               style={{
                 background: 'transparent',
                 border: 'none',
@@ -180,6 +188,16 @@ export default function App() {
               {darkMode ? <Sun size={20} className="text-gold" /> : <Moon size={20} />}
             </button>
           </nav>
+
+          {/* Hamburger Toggle (mobile) */}
+          <button
+            className="hamburger"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </header>
 
@@ -196,7 +214,7 @@ export default function App() {
         fontSize: '0.85rem'
       }}>
         <div className="container">
-          <div style={{
+          <div className="footer-grid" style={{
             display: 'grid',
             gridTemplateColumns: '2fr 1fr 1fr 2fr',
             gap: '3rem',
@@ -299,7 +317,7 @@ export default function App() {
             </div>
           </div>
 
-          <div style={{
+          <div className="footer-bottom" style={{
             borderTop: '1px solid rgba(255,255,255,0.05)',
             paddingTop: '2rem',
             display: 'flex',

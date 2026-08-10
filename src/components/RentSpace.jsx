@@ -80,7 +80,7 @@ export default function RentSpace() {
         </div>
 
         {/* Space Selector & Showcase Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', marginBottom: '4rem' }}>
+        <div className="space-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', marginBottom: '4rem' }}>
           {SPACES.map(space => {
             const isSelected = space.id === selectedSpaceId;
             return (
@@ -156,7 +156,7 @@ export default function RentSpace() {
         </div>
 
         {/* Rental Booking Form Wrapper */}
-        <div style={{
+        <div className="rent-form-wrap" style={{
           backgroundColor: 'var(--card-bg)',
           border: '1px solid var(--border-gold)',
           padding: '3rem',
@@ -173,7 +173,7 @@ export default function RentSpace() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', textAlign: 'left' }}>
+          <form onSubmit={handleSubmit} className="rent-form" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', textAlign: 'left' }}>
             
             {/* Primary Details (Left) */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
@@ -304,7 +304,7 @@ export default function RentSpace() {
             </div>
 
             {/* Submit Button */}
-            <div style={{ gridColumn: 'span 2', marginTop: '1rem' }}>
+            <div className="rent-form-submit" style={{ gridColumn: 'span 2', marginTop: '1rem' }}>
               <button type="submit" className="btn-gold" style={{ width: '100%', padding: '1rem' }}>
                 Submit Venue Booking Request
               </button>

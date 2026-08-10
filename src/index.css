@@ -526,3 +526,256 @@ html.dark .hero-section {
     flex-basis: calc(100% - 2rem);
   }
 }
+
+/* ============================================================
+   RESPONSIVE LAYOUT — Phones / Tablets / Laptops
+   Note: layouts use inline styles in JSX, so !important is used
+   to override them at each breakpoint.
+   ============================================================ */
+
+/* ---------- Mobile Navigation (hamburger) ---------- */
+.hamburger {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+/* ---------- ≤1024px : small laptops & large tablets ---------- */
+@media (max-width: 1024px) {
+  .offer-grid {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)) !important;
+    gap: 2rem !important;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2.5rem !important;
+  }
+
+  .hero-section h1 {
+    font-size: 3.6rem !important;
+  }
+}
+
+/* ---------- ≤900px : tablets & small laptops (nav collapse) ---------- */
+@media (max-width: 900px) {
+  .hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  header .container {
+    height: 68px !important;
+  }
+
+  .main-nav {
+    position: fixed;
+    top: 68px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 0 !important;
+    display: flex !important;
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    padding: 0.5rem 1.5rem 1.25rem;
+    transform: translateY(-130%);
+    visibility: hidden;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
+  }
+
+  .main-nav.open {
+    transform: translateY(0);
+    visibility: visible;
+  }
+
+  .main-nav a {
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border-color);
+    width: 100%;
+  }
+
+  .main-nav .theme-toggle-btn {
+    align-self: flex-start;
+    margin-top: 0.5rem;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr !important;
+    gap: 3rem !important;
+  }
+
+  .hero-section {
+    height: 100vh;
+    min-height: 620px;
+  }
+
+  .testimonial-card {
+    padding: 2rem;
+  }
+}
+
+/* ---------- ≤768px : tablets portrait & large phones ---------- */
+@media (max-width: 768px) {
+  h1 { font-size: 2.4rem; }
+  h2 { font-size: 1.9rem; }
+
+  .section-padding {
+    padding: 4rem 0;
+  }
+
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  .hero-section h1 {
+    font-size: 3rem !important;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+
+  .rent-form {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  .rent-form-submit {
+    grid-column: 1 !important;
+  }
+
+  .modal-content {
+    padding: 1.75rem !important;
+    width: 92% !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-btn-row {
+    flex-direction: column;
+  }
+
+  .modal-btn-row .btn-black,
+  .modal-btn-row .btn-outline {
+    width: 100%;
+  }
+
+  .section-header {
+    margin-bottom: 3rem;
+  }
+}
+
+/* ---------- ≤520px : phones ---------- */
+@media (max-width: 520px) {
+  .container {
+    padding: 0 1.25rem;
+  }
+
+  .section-padding {
+    padding: 3.25rem 0;
+  }
+
+  .hero-section {
+    min-height: 600px;
+  }
+
+  .hero-section h1 {
+    font-size: 2.4rem !important;
+  }
+
+  .hero-section p {
+    font-size: 0.95rem !important;
+  }
+
+  .hero-section .hero-fade-up-4 {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem !important;
+  }
+
+  .hero-section .hero-fade-up-4 a {
+    text-align: center;
+    padding: 0.85rem 1rem;
+  }
+
+  .about-grid {
+    gap: 2.5rem !important;
+  }
+
+  #about h2 {
+    font-size: 1.9rem !important;
+  }
+
+  .about-badges {
+    grid-template-columns: 1fr !important;
+  }
+
+  #about .float-animate {
+    right: 1rem !important;
+    max-width: 200px !important;
+    padding: 1.1rem !important;
+  }
+
+  .offer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.75rem !important;
+  }
+
+  .offer-card-image {
+    height: 220px !important;
+  }
+
+  .offer-card-details,
+  .suite-card-details {
+    padding: 1.5rem !important;
+  }
+
+  .suites-grid,
+  .room-grid,
+  .space-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  .room-card {
+    padding: 1.5rem !important;
+  }
+
+  .floor-tabs {
+    gap: 0.6rem !important;
+  }
+
+  .floor-tabs button {
+    flex: 1 1 45%;
+  }
+
+  .testimonial-card {
+    padding: 1.5rem;
+  }
+
+  .testimonial-card p {
+    font-size: 1rem;
+  }
+
+  .rent-form-wrap {
+    padding: 2rem 1.25rem !important;
+  }
+
+  .footer-grid {
+    gap: 2rem !important;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}
