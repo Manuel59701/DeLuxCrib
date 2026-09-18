@@ -118,3 +118,110 @@ export async function downloadBookingReceipt(booking) {
 
   doc.save(`DeLuxCrib-Receipt-Room${booking.roomNumber}.pdf`);
 }
+
+export async function downloadEventReceipt(eventBooking) {
+  const { jsPDF } = await import('jspdf');
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 56;
+  const contentWidth = pageWidth - margin * 2;
+
+  const total = Number(eventBooking.totalAmount) || 0;
+  const days = Number(eventBooking.days) || 1;
+  const rate = days > 0 ? total / days : total;
+  const refNo = eventBooking.refNo || `DLX-EVE-${Date.now().toString().slice(-6)}`;
+
+  // ---- Header band ----
+  doc.setFillColor(INK[0], INK[1], INK[2]);
+  doc.rect(0, 0, pageWidth, 96, 'F');
+  doc.setFillColor(GOLD[0], GOLD[1], GOLD[2]);
+  doc.rect(0, 96, pageWidth, 6, 'F');
+
+  doc.setFont('times', 'bold');
+  doc.setFontSize(26);
+  doc.setTextColor(GOLD[0], GOLD[1], GOLD[2]);
+  doc.text('DE LUX CRIB', margin, 52);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
+  doc.text('HOTEL & SUITES • EVENT & BANQUET DIVISION', margin, 68);
+  doc.text('777 GOLDEN BOULEVARD • EVENTS@DELUXCRIB.COM', margin, 80);
+
+  doc.setFont('times', 'bold');
+  doc.setFontSize(18);
+  doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
+  doc.text('VENUE RECEIPT', pageWidth - margin, 52, { align: 'right' });
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(GOLD[0], GOLD[1], GOLD[2]);
+  doc.text(`Ref No. ${refNo}`, pageWidth - margin, 68, { align: 'right' });
+
+  // ---- Event details ----
+  const rows = [
+    ['Venue Hall', eventBooking.hallName || '—'],
+    ['Client / Organization', eventBooking.clientName || eventBooking.name || '—'],
+    ['Event Classification', eventBooking.eventType || '—'],
+    ['Reserved Date', formatDate(eventBooking.date)],
+    ['Duration', `${days} Day(s)`],
+    ['Expected Attendees', `${eventBooking.guestCount || 50} Guests`],
+    ['Payment Method', eventBooking.paymentMethod || 'Online Payment (Verified)'],
+    ['Daily Hall Tariff', `$${rate.toFixed(2)} / Day`]
+  ];
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(INK[0], INK[1], INK[2]);
+  doc.text('VENUE RESERVATION & SETTLEMENT DETAILS', margin, 140);
+
+  doc.setDrawColor(GOLD[0], GOLD[1], GOLD[2]);
+  doc.setLineWidth(1);
+  doc.line(margin, 148, pageWidth - margin, 148);
+
+  let y = 172;
+  const rowHeight = 28;
+  rows.forEach(([label, value], index) => {
+    if (index % 2 === 0) {
+      doc.setFillColor(LIGHT_GRAY[0], LIGHT_GRAY[1], LIGHT_GRAY[2]);
+      doc.rect(margin, y - 18, contentWidth, rowHeight, 'F');
+    }
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(GRAY[0], GRAY[1], GRAY[2]);
+    doc.text(label.toUpperCase(), margin + 16, y);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(INK[0], INK[1], INK[2]);
+    doc.text(String(value), pageWidth - margin - 16, y, { align: 'right' });
+    y += rowHeight;
+  });
+
+  // ---- Total box ----
+  doc.setFillColor(INK[0], INK[1], INK[2]);
+  doc.rect(margin, y + 6, contentWidth, 58, 'F');
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9.5);
+  doc.setTextColor(GRAY[0], GRAY[1], GRAY[2]);
+  doc.text('TOTAL AMOUNT SETTLED', margin + 16, y + 34);
+  doc.setFont('times', 'bold');
+  doc.setFontSize(24);
+  doc.setTextColor(GOLD[0], GOLD[1], GOLD[2]);
+  doc.text(`$${total.toFixed(2)}`, pageWidth - margin - 16, y + 40, { align: 'right' });
+
+  // ---- Footer ----
+  doc.setDrawColor(GOLD[0], GOLD[1], GOLD[2]);
+  doc.setLineWidth(1);
+  doc.line(margin, pageHeight - 96, pageWidth - margin, pageHeight - 96);
+  doc.setFont('times', 'italic');
+  doc.setFontSize(10);
+  doc.setTextColor(INK[0], INK[1], INK[2]);
+  doc.text('Thank you for choosing De Lux Crib — where luxury meets heritage.', pageWidth / 2, pageHeight - 68, { align: 'center' });
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8.5);
+  doc.setTextColor(GRAY[0], GRAY[1], GRAY[2]);
+  doc.text('+1 (800) DE-LUX-CRIB  •  EVENTS@DELUXCRIB.COM  •  DELUXCRIB.COM', pageWidth / 2, pageHeight - 50, { align: 'center' });
+  doc.text('This is a computer-generated venue receipt and does not require a signature.', pageWidth / 2, pageHeight - 36, { align: 'center' });
+
+  doc.save(`DeLuxCrib-EventReceipt-${refNo}.pdf`);
+}
+

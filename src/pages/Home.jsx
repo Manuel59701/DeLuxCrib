@@ -432,7 +432,6 @@ export default function Home() {
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={endDrag}
-            onMouseLeave={endDrag}
             onMouseEnter={() => { isHovering.current = true; }}
             onMouseLeave={() => { isHovering.current = false; endDrag(); }}
           >

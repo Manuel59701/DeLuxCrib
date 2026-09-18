@@ -1,15 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Sun, Moon, MapPin, Phone, Mail, Menu, X } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Sun, Moon, MapPin, Phone, Mail, Menu, X, Shield } from 'lucide-react';
 import Home from './pages/Home';
 import SuitesPage from './pages/SuitesPage';
 import EventsPage from './pages/EventsPage';
+import AdminPage from './pages/AdminPage';
 
-function getPageFromHash(hash) {
-  const id = hash.replace('#', '');
-  if (id === 'booking') return 'suites';
-  if (id === 'rent-space') return 'events';
+// ─── Pure path-based routing helpers ──────────────────────────────────────────
+function getCurrentPage() {
+  const path = window.location.pathname.toLowerCase();
+  if (path === '/admin' || path.startsWith('/admin/')) return 'admin';
+  if (path === '/suites') return 'suites';
+  if (path === '/events') return 'events';
   return 'home';
 }
+
+function navigate(path) {
+  window.history.pushState({}, '', path);
+  // Trigger our listener manually since pushState doesn't fire popstate
+  window.dispatchEvent(new Event('__nav__'));
+}
+// ──────────────────────────────────────────────────────────────────────────────
 
 const FacebookIcon = ({ size = 18, ...props }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }} {...props}>
@@ -45,20 +55,27 @@ export default function App() {
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
-  const [page, setPage] = useState(() => getPageFromHash(window.location.hash));
+  const [page, setPage] = useState(() => getCurrentPage());
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const onHashChange = () => {
-      setPage(getPageFromHash(window.location.hash));
-      setMenuOpen(false);
-    };
-    window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
+  const syncPage = useCallback(() => {
+    setPage(getCurrentPage());
+    setMenuOpen(false);
   }, []);
 
-  // Scroll-reveal animations: observe every .reveal element across the site
   useEffect(() => {
+    window.addEventListener('popstate', syncPage);
+    window.addEventListener('__nav__', syncPage);
+    return () => {
+      window.removeEventListener('popstate', syncPage);
+      window.removeEventListener('__nav__', syncPage);
+    };
+  }, [syncPage]);
+
+  // Scroll-reveal animations
+  useEffect(() => {
+    if (page === 'admin') return;
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -82,6 +99,26 @@ export default function App() {
     };
   }, [page, darkMode]);
 
+  // Helper: scroll to anchor on same page or navigate then scroll
+  const goTo = (path, anchor) => (e) => {
+    e.preventDefault();
+    setMenuOpen(false);
+    if (path !== window.location.pathname) {
+      navigate(path);
+      // Scroll after next paint
+      if (anchor) setTimeout(() => {
+        document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth' });
+      }, 80);
+    } else if (anchor) {
+      document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // If on /admin route, render dedicated Admin layout (no navbar/footer)
+  if (page === 'admin') {
+    return <AdminPage onExit={() => navigate('/')} />;
+  }
+
   return (
     <div style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', transition: 'var(--transition-smooth)' }}>
 
@@ -102,7 +139,7 @@ export default function App() {
           alignItems: 'center'
         }}>
           {/* Logo */}
-          <a href="#hero" onClick={() => setMenuOpen(false)} style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <a href="/" onClick={goTo('/', 'hero')} style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
             <span style={{
               fontFamily: 'var(--font-serif)',
               fontSize: '1.6rem',
@@ -127,20 +164,28 @@ export default function App() {
             className={menuOpen ? 'main-nav open' : 'main-nav'}
             style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}
           >
-            <a href="#hero" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={() => setMenuOpen(false)}>
+            <a href="/" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={goTo('/', 'hero')}>
               Home
             </a>
-            <a href="#amenities" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={() => setMenuOpen(false)}>
+            <a href="/#amenities" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={goTo('/', 'amenities')}>
               Amenities
             </a>
-            <a href="#booking" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={() => setMenuOpen(false)}>
+            <a href="/#booking" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={goTo('/', 'booking')}>
               Suites
             </a>
-            <a href="#rent-space" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={() => setMenuOpen(false)}>
+            <a href="/#rent-space" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={goTo('/', 'rent-space')}>
               Events
             </a>
-            <a href="#testimonials" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={() => setMenuOpen(false)}>
+            <a href="/#testimonials" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={goTo('/', 'testimonials')}>
               Reviews
+            </a>
+            <a
+              href="/admin"
+              style={{ fontSize: '0.8rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-gold)' }}
+              className="nav-link"
+              onClick={(e) => { e.preventDefault(); navigate('/admin'); }}
+            >
+              Staff Portal
             </a>
             
             {/* Theme Toggle Button */}
@@ -224,10 +269,19 @@ export default function App() {
                 Navigation
               </h4>
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                <li><a href="#about" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'}>Heritage</a></li>
-                <li><a href="#amenities" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'}>What We Offer</a></li>
-                <li><a href="#booking" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'}>Book Chambers</a></li>
-                <li><a href="#rent-space" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'}>Rent Event Spaces</a></li>
+                <li><a href="/#about" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'} onClick={goTo('/', 'about')}>Heritage</a></li>
+                <li><a href="/#amenities" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'} onClick={goTo('/', 'amenities')}>What We Offer</a></li>
+                <li><a href="/#booking" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'} onClick={goTo('/', 'booking')}>Book Chambers</a></li>
+                <li><a href="/#rent-space" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'} onClick={goTo('/', 'rent-space')}>Rent Event Spaces</a></li>
+                <li>
+                  <a
+                    href="/admin"
+                    style={{ color: 'var(--color-gold)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontWeight: '600' }}
+                    onClick={(e) => { e.preventDefault(); navigate('/admin'); }}
+                  >
+                    <Shield size={13} /> Staff PMS / Admin
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -303,10 +357,17 @@ export default function App() {
             flexWrap: 'wrap',
             gap: '1rem'
           }}>
-            <span>&copy; {new Date().getFullYear()} De Lux Crib. All Rights Reserved. Designed for pitch.</span>
-            <div style={{ display: 'flex', gap: '1.5rem' }}>
+            <span>&copy; {new Date().getFullYear()} De Lux Crib. All Rights Reserved.</span>
+            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
               <a href="#">Privacy Policy</a>
               <a href="#">Terms & Conditions</a>
+              <a
+                href="/admin"
+                style={{ color: 'var(--color-gold)', display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}
+                onClick={(e) => { e.preventDefault(); navigate('/admin'); }}
+              >
+                <Shield size={12} /> Staff Portal
+              </a>
             </div>
           </div>
         </div>
@@ -315,3 +376,4 @@ export default function App() {
     </div>
   );
 }
+
