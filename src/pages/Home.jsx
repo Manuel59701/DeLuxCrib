@@ -72,7 +72,7 @@ const FLOORS = [
   }
 ];
 
-export default function Home() {
+export default function Home({ onNavigate }) {
   useEffect(() => {
     const scrollToTarget = () => {
       const id = window.location.hash.replace('#', '');
@@ -179,10 +179,12 @@ export default function Home() {
               De Lux Crib chambers offer refined comfort, curated recreation spaces, and executive lounges. Elevate your lodging standards.
             </p>
             <div className="hero-fade-up hero-fade-up-4" style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
-              <a href="#booking" className="btn-gold" style={{ border: '1px solid var(--color-gold)' }}>
-                Secure A Chamber
+              <a href="/suites" className="btn-gold" style={{ border: '1px solid var(--color-gold)' }}
+                 onClick={(e) => { e.preventDefault(); onNavigate?.('/suites'); }}>
+                Book A Suite
               </a>
-              <a href="#rent-space" className="btn-outline" style={{ borderColor: '#ffffff', color: '#ffffff' }}
+              <a href="/events" className="btn-outline" style={{ borderColor: '#ffffff', color: '#ffffff' }}
+                 onClick={(e) => { e.preventDefault(); onNavigate?.('/events'); }}
                  onMouseEnter={(e) => {
                    e.target.style.backgroundColor = '#ffffff';
                    e.target.style.color = '#000000';
@@ -192,7 +194,7 @@ export default function Home() {
                    e.target.style.color = '#ffffff';
                  }}
               >
-                Inquire For Events
+                Book A Hall For Events
               </a>
             </div>
           </div>
@@ -411,7 +413,8 @@ export default function Home() {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '4rem' }}>
-            <a href="#booking" className="btn-gold" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2.5rem', fontSize: '0.9rem' }}>
+            <a href="/suites" className="btn-gold" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2.5rem', fontSize: '0.9rem' }}
+               onClick={(e) => { e.preventDefault(); onNavigate?.('/suites'); }}>
               Book a Room <ArrowRight size={18} />
             </a>
           </div>

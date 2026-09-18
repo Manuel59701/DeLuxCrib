@@ -377,6 +377,74 @@ export function setStaffAuth(user) {
   window.dispatchEvent(new CustomEvent('delux_auth_updated', { detail: user }));
 }
 
+// Registered Staff Accounts (created by an Admin from the Staff Management tab)
+const STAFF_KEY = 'delux_crib_staff_users_v1';
+
+export function getStaffUsers() {
+  try {
+    const raw = localStorage.getItem(STAFF_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    console.error('Failed to parse staff users:', e);
+  }
+  return [];
+}
+
+export function registerStaff({ name, email, password, role }) {
+  const normalizedEmail = (email || '').trim().toLowerCase();
+  const normalizedRole = (role || '').trim().toLowerCase();
+  const meta = ROLES[normalizedRole.toUpperCase()];
+
+  if (!normalizedEmail || !password) {
+    throw new Error('Email and password are required.');
+  }
+  if (!meta || normalizedRole === 'admin') {
+    throw new Error('Please select a valid staff role (FDO or EFO).');
+  }
+
+  const users = getStaffUsers();
+  const alreadyExists = DEMO_USERS.some(u => u.email.toLowerCase() === normalizedEmail)
+    || users.some(u => u.email.toLowerCase() === normalizedEmail);
+  if (alreadyExists) {
+    throw new Error('A staff account with this email already exists.');
+  }
+
+  const derivedName = normalizedEmail.split('@')[0]
+    .replace(/[._-]+/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase());
+
+  const newUser = {
+    id: 'usr_' + Date.now(),
+    role: normalizedRole,
+    name: (name || '').trim() || derivedName,
+    email: normalizedEmail,
+    password,
+    avatar: normalizedRole === 'fdo' ? '🛎️' : '🎭',
+    title: meta.name,
+    registeredAt: new Date().toISOString()
+  };
+
+  const updated = [...users, newUser];
+  try { localStorage.setItem(STAFF_KEY, JSON.stringify(updated)); } catch (_) {}
+  window.dispatchEvent(new CustomEvent('delux_staff_updated', { detail: updated }));
+  return newUser;
+}
+
+export function removeStaff(id) {
+  const updated = getStaffUsers().filter(u => u.id !== id);
+  try { localStorage.setItem(STAFF_KEY, JSON.stringify(updated)); } catch (_) {}
+  window.dispatchEvent(new CustomEvent('delux_staff_updated', { detail: updated }));
+  return updated;
+}
+
+// Validates a login against admin-registered staff accounts.
+export function authenticateStaff(email, password) {
+  const normalizedEmail = (email || '').trim().toLowerCase();
+  return getStaffUsers().find(
+    u => u.email.toLowerCase() === normalizedEmail && u.password === password
+  ) || null;
+}
+
 // Log an action to the audit trail
 export function appendAuditLog(actor, action) {
   const store = getStore();

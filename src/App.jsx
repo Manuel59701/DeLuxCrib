@@ -4,22 +4,7 @@ import Home from './pages/Home';
 import SuitesPage from './pages/SuitesPage';
 import EventsPage from './pages/EventsPage';
 import AdminPage from './pages/AdminPage';
-
-// ─── Pure path-based routing helpers ──────────────────────────────────────────
-function getCurrentPage() {
-  const path = window.location.pathname.toLowerCase();
-  if (path === '/admin' || path.startsWith('/admin/')) return 'admin';
-  if (path === '/suites') return 'suites';
-  if (path === '/events') return 'events';
-  return 'home';
-}
-
-function navigate(path) {
-  window.history.pushState({}, '', path);
-  // Trigger our listener manually since pushState doesn't fire popstate
-  window.dispatchEvent(new Event('__nav__'));
-}
-// ──────────────────────────────────────────────────────────────────────────────
+import { getCurrentPage, navigate } from './utils/router';
 
 const FacebookIcon = ({ size = 18, ...props }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }} {...props}>
@@ -170,10 +155,10 @@ export default function App() {
             <a href="/#amenities" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={goTo('/', 'amenities')}>
               Amenities
             </a>
-            <a href="/#booking" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={goTo('/', 'booking')}>
+            <a href="/suites" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={(e) => { e.preventDefault(); setMenuOpen(false); navigate('/suites'); }}>
               Suites
             </a>
-            <a href="/#rent-space" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={goTo('/', 'rent-space')}>
+            <a href="/events" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={(e) => { e.preventDefault(); setMenuOpen(false); navigate('/events'); }}>
               Events
             </a>
             <a href="/#testimonials" style={{ fontSize: '0.8rem', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.1em' }} className="nav-link" onClick={goTo('/', 'testimonials')}>
@@ -221,7 +206,7 @@ export default function App() {
         </div>
       </header>
 
-      {page === 'home' && <Home />}
+      {page === 'home' && <Home onNavigate={navigate} />}
       {page === 'suites' && <SuitesPage />}
       {page === 'events' && <EventsPage />}
 
@@ -271,8 +256,8 @@ export default function App() {
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                 <li><a href="/#about" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'} onClick={goTo('/', 'about')}>Heritage</a></li>
                 <li><a href="/#amenities" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'} onClick={goTo('/', 'amenities')}>What We Offer</a></li>
-                <li><a href="/#booking" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'} onClick={goTo('/', 'booking')}>Book Chambers</a></li>
-                <li><a href="/#rent-space" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'} onClick={goTo('/', 'rent-space')}>Rent Event Spaces</a></li>
+                <li><a href="/suites" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'} onClick={(e) => { e.preventDefault(); navigate('/suites'); }}>Book Chambers</a></li>
+                <li><a href="/events" style={{ color: '#aaaaaa' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#aaa'} onClick={(e) => { e.preventDefault(); navigate('/events'); }}>Rent Event Spaces</a></li>
                 <li>
                   <a
                     href="/admin"

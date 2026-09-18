@@ -1,11 +1,12 @@
 import React from 'react';
-import { 
+import {
   LayoutDashboard,
   FileCheck2, 
   Building2, 
   Calendar,
   SlidersHorizontal,
   BarChart3,
+  Users,
   Lock
 } from 'lucide-react';
 
@@ -44,6 +45,12 @@ export const ALL_TABS = [
     id: 'analytics',
     label: 'Financial Reports',
     icon: BarChart3,
+    roles: ['admin']
+  },
+  {
+    id: 'staff',
+    label: 'Staff Management',
+    icon: Users,
     roles: ['admin']
   }
 ];

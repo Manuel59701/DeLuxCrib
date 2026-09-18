@@ -13,12 +13,14 @@ import OccupancyBoard from '../components/admin/OccupancyBoard';
 import EventCalendar from '../components/admin/EventCalendar';
 import InventoryPricing from '../components/admin/InventoryPricing';
 import ReportsAnalytics from '../components/admin/ReportsAnalytics';
+import StaffManagement from '../components/admin/StaffManagement';
 import AuditLog from '../components/admin/AuditLog';
 import { 
   Building2, 
   FileCheck2, 
   Calendar, 
-  DollarSign
+  DollarSign,
+  UserPlus
 } from 'lucide-react';
 
 export default function AdminPage() {
@@ -57,7 +59,7 @@ export default function AdminPage() {
   useEffect(() => {
     if (currentUser) {
       if (currentUser.role === 'admin') {
-        setActiveTab(prev => ['overview', 'receipts', 'occupancy', 'calendar', 'pricing', 'analytics'].includes(prev) ? prev : 'overview');
+        setActiveTab(prev => ['overview', 'receipts', 'occupancy', 'calendar', 'pricing', 'analytics', 'staff'].includes(prev) ? prev : 'overview');
       } else if (currentUser.role === 'fdo') {
         setActiveTab(prev => ['receipts', 'occupancy'].includes(prev) ? prev : 'receipts');
       } else if (currentUser.role === 'efo') {
@@ -193,6 +195,9 @@ export default function AdminPage() {
                 <button onClick={() => setActiveTab('calendar')} className="btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}>
                   Event Halls
                 </button>
+                <button onClick={() => setActiveTab('staff')} className="btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <UserPlus size={15} /> Register Staff
+                </button>
               </div>
             </div>
 
@@ -276,6 +281,13 @@ export default function AdminPage() {
         {activeTab === 'analytics' && currentUser.role === 'admin' && (
           <ReportsAnalytics
             store={store}
+          />
+        )}
+
+        {/* ================= STAFF MANAGEMENT (ADMIN ONLY) ================= */}
+        {activeTab === 'staff' && currentUser.role === 'admin' && (
+          <StaffManagement
+            user={currentUser}
           />
         )}
       </main>

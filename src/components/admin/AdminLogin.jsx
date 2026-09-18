@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Shield, Lock, Mail, ArrowRight, Check, UserCheck } from 'lucide-react';
-import { DEMO_USERS, ROLES, setStaffAuth } from '../../utils/dataStore';
+import { DEMO_USERS, ROLES, setStaffAuth, authenticateStaff } from '../../utils/dataStore';
 
 export default function AdminLogin({ onLoginSuccess }) {
   const [selectedRole, setSelectedRole] = useState('admin');
@@ -27,6 +27,19 @@ export default function AdminLogin({ onLoginSuccess }) {
     setError('');
 
     setTimeout(() => {
+      // 1. Check admin-registered staff accounts first (email + password must match)
+      const registered = authenticateStaff(email, password);
+      if (registered) {
+        const { password: _pw, ...safeUser } = registered;
+        setStaffAuth(safeUser);
+        setIsLoading(false);
+        if (onLoginSuccess) {
+          onLoginSuccess(safeUser);
+        }
+        return;
+      }
+
+      // 2. Fall back to demo accounts (no stored password) / ad-hoc role access
       const matched = DEMO_USERS.find(u => u.email.toLowerCase() === email.trim().toLowerCase()) 
         || DEMO_USERS.find(u => u.role === selectedRole)
         || {
