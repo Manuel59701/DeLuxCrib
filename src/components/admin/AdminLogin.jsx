@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Shield, Lock, Mail, ArrowRight, Check, UserCheck } from 'lucide-react';
 import { DEMO_USERS, ROLES, setStaffAuth, authenticateStaff } from '../../utils/dataStore';
 
-export default function AdminLogin({ onLoginSuccess }) {
+export default function AdminLogin({ onLoginSuccess, onExit }) {
   const [selectedRole, setSelectedRole] = useState('admin');
   const [email, setEmail] = useState('admin@deluxcrib.com');
   const [password, setPassword] = useState('delux2026');
@@ -73,7 +73,8 @@ export default function AdminLogin({ onLoginSuccess }) {
     }}>
       {/* Return to Guest site link */}
       <a
-        href="#hero"
+        href="/"
+        onClick={(e) => { e.preventDefault(); if (onExit) onExit(); }}
         style={{
           position: 'absolute',
           top: '2rem',

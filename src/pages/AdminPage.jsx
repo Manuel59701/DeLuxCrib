@@ -23,7 +23,7 @@ import {
   UserPlus
 } from 'lucide-react';
 
-export default function AdminPage() {
+export default function AdminPage({ onExit }) {
   const [currentUser, setCurrentUser] = useState(() => getStaffAuth());
   const [activeTab, setActiveTab] = useState(() => {
     const auth = getStaffAuth();
@@ -88,7 +88,7 @@ export default function AdminPage() {
 
   // If not logged in, show login page
   if (!currentUser) {
-    return <AdminLogin onLoginSuccess={(usr) => setCurrentUser(usr)} />;
+    return <AdminLogin onLoginSuccess={(usr) => setCurrentUser(usr)} onExit={onExit} />;
   }
 
   // Quick stats
@@ -114,6 +114,7 @@ export default function AdminPage() {
       <AdminNavbar
         user={currentUser}
         onLogout={handleLogout}
+        onExit={onExit}
         darkMode={darkMode}
         toggleDarkMode={toggleDarkMode}
       />

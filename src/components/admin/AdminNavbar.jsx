@@ -2,7 +2,7 @@ import React from 'react';
 import { LogOut, Sun, Moon, Shield, ExternalLink, RotateCcw } from 'lucide-react';
 import { ROLES, resetStore } from '../../utils/dataStore';
 
-export default function AdminNavbar({ user, onLogout, darkMode, toggleDarkMode }) {
+export default function AdminNavbar({ user, onLogout, onExit, darkMode, toggleDarkMode }) {
   const roleMeta = ROLES[user?.role?.toUpperCase()] || ROLES.ADMIN;
 
   return (
@@ -53,9 +53,8 @@ export default function AdminNavbar({ user, onLogout, darkMode, toggleDarkMode }
 
           {/* Quick link to guest website */}
           <a
-            href="#hero"
-            target="_blank"
-            rel="noreferrer"
+            href="/"
+            onClick={(e) => { e.preventDefault(); if (onExit) onExit(); }}
             style={{
               fontSize: '0.75rem',
               color: 'var(--text-secondary)',
@@ -67,7 +66,7 @@ export default function AdminNavbar({ user, onLogout, darkMode, toggleDarkMode }
               borderRadius: '4px',
               border: '1px solid var(--border-color)'
             }}
-            title="Open customer view in new tab"
+            title="Return to the guest website"
           >
             Guest Website <ExternalLink size={12} />
           </a>
