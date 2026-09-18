@@ -7,12 +7,14 @@ import {
   Check, 
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Unlock
 } from 'lucide-react';
 import { 
   createEventBooking, 
   blockHallDate, 
   unblockHallDate,
+  releaseEventBooking,
   INITIAL_HALLS 
 } from '../../utils/dataStore';
 
@@ -21,6 +23,7 @@ export default function EventCalendar({ store, user, onRefresh }) {
   const [currentYear, setCurrentYear] = useState(2026);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBlockModal, setShowBlockModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
   const [notice, setNotice] = useState(null);
 
   // New Event Form
@@ -75,6 +78,27 @@ export default function EventCalendar({ store, user, onRefresh }) {
     if (onRefresh) onRefresh();
     setTimeout(() => setNotice(null), 3000);
   };
+
+  const handleReleaseEvent = (ev) => {
+    if (!window.confirm(`Release the booking for "${ev.clientName}" on ${ev.date}? The date will become available again.`)) return;
+    releaseEventBooking(ev.id, user?.name || 'Event Officer');
+    setNotice(`Released ${ev.hallName} on ${ev.date} — the date is now available.`);
+    if (onRefresh) onRefresh();
+    setSelectedDate(null);
+    setTimeout(() => setNotice(null), 4000);
+  };
+
+  const handleReleaseBlock = (block) => {
+    if (!window.confirm(`Release the hold on ${block.date} (${block.hallName})?`)) return;
+    unblockHallDate(block.id, user?.name || 'Event Officer');
+    setNotice(`Released hold on ${block.date} for ${block.hallName}.`);
+    if (onRefresh) onRefresh();
+    setSelectedDate(null);
+    setTimeout(() => setNotice(null), 4000);
+  };
+
+  const selectedEvents = selectedDate ? eventBookings.filter(e => e.date === selectedDate) : [];
+  const selectedBlocks = selectedDate ? blockedDates.filter(b => b.date === selectedDate) : [];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
@@ -169,17 +193,22 @@ export default function EventCalendar({ store, user, onRefresh }) {
               const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(dNum).padStart(2, '0')}`;
               const dayEvents = eventBookings.filter(e => e.date === dateStr);
               const isBlocked = blockedDates.some(b => b.date === dateStr);
+              const isClickable = dayEvents.length > 0 || isBlocked;
 
               return (
                 <div
                   key={dateStr}
+                  onClick={() => isClickable && setSelectedDate(dateStr)}
+                  title={isClickable ? 'Click to manage / release this date' : undefined}
                   style={{
                     minHeight: '60px',
                     padding: '0.3rem',
                     border: '1px solid var(--border-color)',
                     backgroundColor: dayEvents.length > 0 ? 'var(--color-gold-light)' : (isBlocked ? 'rgba(239, 68, 68, 0.1)' : 'transparent'),
                     borderRadius: '2px',
-                    fontSize: '0.75rem'
+                    fontSize: '0.75rem',
+                    cursor: isClickable ? 'pointer' : 'default',
+                    transition: 'var(--transition-fast)'
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: dayEvents.length > 0 ? 'bold' : 'normal' }}>
@@ -375,6 +404,117 @@ export default function EventCalendar({ store, user, onRefresh }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Manage / Release Booked Date Modal */}
+      {selectedDate && (
+        <div className="modal-overlay" onClick={() => setSelectedDate(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px', borderTop: '5px solid var(--color-gold)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+              <h3 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-serif)', margin: 0 }}>
+                Manage Date: {selectedDate}
+              </h3>
+              <button className="modal-close" onClick={() => setSelectedDate(null)}><X size={18} /></button>
+            </div>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: 0, marginBottom: '1.2rem' }}>
+              Release a booking to make this date available again.
+            </p>
+
+            {selectedEvents.length === 0 && selectedBlocks.length === 0 && (
+              <div style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                No bookings or holds on this date.
+              </div>
+            )}
+
+            {selectedEvents.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: selectedBlocks.length > 0 ? '1.2rem' : 0 }}>
+                <strong style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-gold)' }}>
+                  Booked Venues ({selectedEvents.length})
+                </strong>
+                {selectedEvents.map(ev => (
+                  <div
+                    key={ev.id}
+                    style={{
+                      padding: '0.9rem',
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderLeft: '3px solid var(--color-gold)',
+                      borderRadius: '2px'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <strong style={{ fontSize: '0.9rem' }}>{ev.clientName}</strong>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--color-gold)' }}>${ev.totalAmount}</span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+                      {ev.hallName} &bull; 👥 {ev.guestCount} Guests
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.7rem', gap: '0.6rem' }}>
+                      <span style={{ fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)' }}>
+                        Status: {ev.eventStatus}
+                      </span>
+                      <button
+                        onClick={() => handleReleaseEvent(ev)}
+                        className="btn-outline"
+                        style={{
+                          padding: '0.45rem 0.8rem',
+                          fontSize: '0.72rem',
+                          borderColor: '#ef4444',
+                          color: '#ef4444',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.35rem'
+                        }}
+                      >
+                        <Unlock size={13} /> Release Date
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {selectedBlocks.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                <strong style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#ef4444' }}>
+                  Held Dates ({selectedBlocks.length})
+                </strong>
+                {selectedBlocks.map(block => (
+                  <div
+                    key={block.id}
+                    style={{
+                      padding: '0.9rem',
+                      backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                      borderLeft: '3px solid #ef4444',
+                      borderRadius: '2px'
+                    }}
+                  >
+                    <div style={{ fontSize: '0.8rem', fontWeight: '600' }}>{block.hallName}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+                      {block.reason}
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.7rem' }}>
+                      <button
+                        onClick={() => handleReleaseBlock(block)}
+                        className="btn-outline"
+                        style={{
+                          padding: '0.45rem 0.8rem',
+                          fontSize: '0.72rem',
+                          borderColor: '#ef4444',
+                          color: '#ef4444',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.35rem'
+                        }}
+                      >
+                        <Unlock size={13} /> Release Hold
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

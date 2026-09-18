@@ -825,6 +825,18 @@ export function unblockHallDate(blockId, actor = 'Event Officer') {
   saveStore(store);
 }
 
+// Release a booked venue date (removes the reservation so the date becomes available again)
+export function releaseEventBooking(eventId, actor = 'Event Officer') {
+  const store = getStore();
+  const target = (store.eventBookings || []).find(ev => ev.id === eventId || ev.refNo === eventId);
+  store.eventBookings = (store.eventBookings || []).filter(ev => ev.id !== eventId && ev.refNo !== eventId);
+  if (target) {
+    appendAuditLog(actor, `Released venue booking for "${target.clientName}" (${target.hallName}) on ${target.date}.`);
+    saveStore(store);
+  }
+  return target;
+}
+
 // Update Room Pricing & Hall Pricing (Admin Only)
 export function updateRoomPricing(floorNum, roomNumber, newPrice, actor = 'Admin') {
   const store = getStore();

@@ -74,7 +74,7 @@ export default function AdminLogin({ onLoginSuccess, onExit }) {
       {/* Return to Guest site link */}
       <a
         href="/"
-        onClick={(e) => { e.preventDefault(); if (onExit) onExit(); }}
+        onClick={(e) => { if (onExit) { e.preventDefault(); onExit(); } }}
         style={{
           position: 'absolute',
           top: '2rem',

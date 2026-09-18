@@ -54,7 +54,7 @@ export default function AdminNavbar({ user, onLogout, onExit, darkMode, toggleDa
           {/* Quick link to guest website */}
           <a
             href="/"
-            onClick={(e) => { e.preventDefault(); if (onExit) onExit(); }}
+            onClick={(e) => { if (onExit) { e.preventDefault(); onExit(); } }}
             style={{
               fontSize: '0.75rem',
               color: 'var(--text-secondary)',
