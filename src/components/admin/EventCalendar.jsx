@@ -8,6 +8,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Unlock
 } from 'lucide-react';
 import { 
@@ -23,6 +24,7 @@ export default function EventCalendar({ store, user, onRefresh }) {
   const [currentYear, setCurrentYear] = useState(2026);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBlockModal, setShowBlockModal] = useState(false);
+  const [hallOpen, setHallOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [notice, setNotice] = useState(null);
 
@@ -99,6 +101,10 @@ export default function EventCalendar({ store, user, onRefresh }) {
 
   const selectedEvents = selectedDate ? eventBookings.filter(e => e.date === selectedDate) : [];
   const selectedBlocks = selectedDate ? blockedDates.filter(b => b.date === selectedDate) : [];
+
+  // Short display names so the opened dropdown list never stretches
+  // past the select button on narrow screens
+  const shortHallName = (name) => (name || '').replace(/^The /, '').split(' (')[0].replace(/\s+&.*$/, '').trim();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
@@ -282,25 +288,90 @@ export default function EventCalendar({ store, user, onRefresh }) {
 
       {/* Book Hall Modal */}
       {showAddModal && (
-        <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '440px', borderTop: '5px solid var(--color-gold)' }}>
+        <div className="modal-overlay" onClick={() => { setShowAddModal(false); setHallOpen(false); }}>
+          <div className="modal-content event-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '440px', borderTop: '5px solid var(--color-gold)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h3 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-serif)', margin: 0 }}>Book Event Space</h3>
-              <button className="modal-close" onClick={() => setShowAddModal(false)}><X size={18} /></button>
+              <button className="modal-close" onClick={() => { setShowAddModal(false); setHallOpen(false); }}><X size={18} /></button>
             </div>
 
             <form onSubmit={handleAddSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
               <div>
                 <label className="form-label">Select Hall</label>
-                <select
-                  className="form-input"
-                  value={eventForm.hallId}
-                  onChange={(e) => setEventForm({ ...eventForm, hallId: e.target.value })}
-                >
-                  {halls.map(h => (
-                    <option key={h.id} value={h.id}>{h.name} (${h.pricePerDay}/day)</option>
-                  ))}
-                </select>
+                {/* Custom dropdown: option list is pinned to the button edges
+                    so it can never exceed the button width on any screen */}
+                <div style={{ position: 'relative' }}>
+                  <button
+                    type="button"
+                    onClick={() => setHallOpen(o => !o)}
+                    className="form-input"
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {(() => {
+                        const h = halls.find(x => x.id === eventForm.hallId) || halls[0];
+                        return h ? `${shortHallName(h.name)} · $${h.pricePerDay}` : 'Select hall';
+                      })()}
+                    </span>
+                    <ChevronDown size={16} style={{ flexShrink: 0, color: 'var(--color-gold)' }} />
+                  </button>
+
+                  {hallOpen && (
+                    <>
+                      <div onClick={() => setHallOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 1 }} />
+                      <div style={{
+                        position: 'absolute',
+                        top: 'calc(100% + 4px)',
+                        left: 0,
+                        right: 0,
+                        backgroundColor: 'var(--card-bg)',
+                        border: '1px solid var(--border-gold)',
+                        borderRadius: '2px',
+                        boxShadow: 'var(--shadow-lg)',
+                        zIndex: 2,
+                        maxHeight: '180px',
+                        overflowY: 'auto'
+                      }}>
+                        {halls.map(h => {
+                          const isSelected = h.id === eventForm.hallId;
+                          return (
+                            <button
+                              key={h.id}
+                              type="button"
+                              onClick={() => { setEventForm({ ...eventForm, hallId: h.id }); setHallOpen(false); }}
+                              style={{
+                                display: 'block',
+                                width: '100%',
+                                textAlign: 'left',
+                                padding: '0.6rem 0.8rem',
+                                fontSize: '0.85rem',
+                                backgroundColor: isSelected ? 'var(--bg-tertiary)' : 'transparent',
+                                color: isSelected ? 'var(--color-gold)' : 'var(--text-primary)',
+                                fontWeight: isSelected ? 'bold' : 'normal',
+                                border: 'none',
+                                borderBottom: '1px solid var(--border-color)',
+                                cursor: 'pointer',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                              }}
+                            >
+                              {shortHallName(h.name)} · ${h.pricePerDay}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -337,7 +408,7 @@ export default function EventCalendar({ store, user, onRefresh }) {
               </div>
 
               <div style={{ display: 'flex', gap: '0.8rem', marginTop: '0.5rem' }}>
-                <button type="button" onClick={() => setShowAddModal(false)} className="btn-outline" style={{ flex: 1, padding: '0.7rem' }}>
+                <button type="button" onClick={() => { setShowAddModal(false); setHallOpen(false); }} className="btn-outline" style={{ flex: 1, padding: '0.7rem' }}>
                   Cancel
                 </button>
                 <button type="submit" className="btn-gold" style={{ flex: 1.5, padding: '0.7rem' }}>

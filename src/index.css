@@ -846,6 +846,18 @@ html.dark .hero-section {
   display: none;
 }
 
+/* Walk-in & event modal dropdowns: the button fills its column exactly,
+   and the opened option list is sized by the (short) option labels above,
+   so it never stretches past the button on any screen size. */
+.walkin-modal select,
+.event-modal select {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
 /* ---------- ≤1024px : small laptops & large tablets ---------- */
 @media (max-width: 1024px) {
   .receipt-split,
@@ -1085,6 +1097,13 @@ html.dark .hero-section {
   /* Stack the small side-by-side input pairs */
   .booking-mini-grid {
     grid-template-columns: 1fr !important;
+  }
+
+  /* Walk-in & event dropdowns: smaller text keeps the opened option
+     list narrower than the button even on ~320px screens */
+  .walkin-modal select,
+  .event-modal select {
+    font-size: 0.8rem !important;
   }
 
   /* Stack booking modal action buttons full-width */

@@ -466,10 +466,10 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
                       onChange={(e) => handleFloorChange(e.target.value)}
                       style={{ cursor: 'pointer', fontSize: '0.85rem', padding: '0.5rem 0.8rem' }}
                     >
-                      <option value="1">Floor 01 — Deluxe Chambers ($150/night)</option>
-                      <option value="2">Floor 02 — Executive Suites ($280/night)</option>
-                      <option value="3">Floor 03 — Presidential Luxury Suites ($490/night)</option>
-                      <option value="4">Floor 04 — De Lux Penthouse Deck ($950/night)</option>
+                      <option value="1">Floor 01 · Deluxe · $150</option>
+                      <option value="2">Floor 02 · Executive · $280</option>
+                      <option value="3">Floor 03 · Presidential · $490</option>
+                      <option value="4">Floor 04 · Penthouse · $950</option>
                     </select>
                   </div>
 
@@ -490,10 +490,10 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
                         const isCleaning = r.status === 'cleaning';
                         const isMaintenance = r.status === 'maintenance';
 
-                        let badge = '[AVAILABLE]';
-                        if (isBooked) badge = `[OCCUPIED${r.guest ? ': ' + r.guest : ''}]`;
-                        else if (isCleaning) badge = '[CLEANING]';
-                        else if (isMaintenance) badge = '[MAINTENANCE]';
+                        let badge = 'Available';
+                        if (isBooked) badge = 'Occupied';
+                        else if (isCleaning) badge = 'Cleaning';
+                        else if (isMaintenance) badge = 'Maintenance';
 
                         return (
                           <option
@@ -506,7 +506,7 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
                               fontWeight: isVacant ? 'bold' : 'normal'
                             }}
                           >
-                            Room {r.number} ({r.type}) — ${r.price}/night {badge}
+                            Room {r.number} · ${r.price} · {badge}
                           </option>
                         );
                       })}
