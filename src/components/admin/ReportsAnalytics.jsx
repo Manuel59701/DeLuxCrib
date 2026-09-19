@@ -45,7 +45,7 @@ export default function ReportsAnalytics({ store }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Header & Export */}
-      <div style={{
+      <div className="admin-toolbar" style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -178,7 +178,7 @@ export default function ReportsAnalytics({ store }) {
       </div>
 
       {/* Revenue Breakdown by Tiers & Halls */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
+      <div className="analytics-split" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
         {/* Tier Revenue Visualizer */}
         <div style={{
           backgroundColor: 'var(--card-bg)',

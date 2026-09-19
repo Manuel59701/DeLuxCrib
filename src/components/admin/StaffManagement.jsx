@@ -92,7 +92,7 @@ export default function StaffManagement({ user }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Header */}
-      <div style={{
+      <div className="admin-toolbar" style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -176,6 +176,7 @@ export default function StaffManagement({ user }) {
               return (
                 <div
                   key={member.id}
+                  className="staff-row"
                   style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -360,7 +361,7 @@ export default function StaffManagement({ user }) {
                 </div>
               )}
 
-              <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'flex-end', marginTop: '0.4rem' }}>
+              <div className="modal-btn-row" style={{ display: 'flex', gap: '0.6rem', justifyContent: 'flex-end', marginTop: '0.4rem' }}>
                 <button type="button" onClick={closeModal} className="btn-outline" style={{ padding: '0.6rem 1.1rem', fontSize: '0.82rem' }}>
                   Cancel
                 </button>

@@ -15,7 +15,7 @@ export default function AdminNavbar({ user, onLogout, onExit, darkMode, toggleDa
       backdropFilter: 'blur(10px)',
       boxShadow: 'var(--shadow-sm)'
     }}>
-      <div style={{
+      <div className="admin-navbar-inner" style={{
         maxWidth: '1440px',
         margin: '0 auto',
         padding: '0.8rem 1.5rem',
@@ -26,7 +26,7 @@ export default function AdminNavbar({ user, onLogout, onExit, darkMode, toggleDa
         gap: '1rem'
       }}>
         {/* Left: Brand & Portal Badge */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
+        <div className="admin-navbar-brand" style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
           <a href="#admin" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <span style={{
               fontFamily: 'var(--font-serif)',
@@ -42,6 +42,7 @@ export default function AdminNavbar({ user, onLogout, onExit, darkMode, toggleDa
           {/* Quick link to guest website */}
           <a
             href="/"
+            className="admin-guest-link"
             onClick={(e) => { if (onExit) { e.preventDefault(); onExit(); } }}
             style={{
               fontSize: '0.75rem',
@@ -61,9 +62,9 @@ export default function AdminNavbar({ user, onLogout, onExit, darkMode, toggleDa
         </div>
 
         {/* Right: Staff Profile & Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div className="admin-navbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           {/* Active Staff Identity */}
-          <div style={{
+          <div className="admin-user-chip" style={{
             display: 'flex',
             alignItems: 'center',
             gap: '0.8rem',
@@ -111,6 +112,7 @@ export default function AdminNavbar({ user, onLogout, onExit, darkMode, toggleDa
 
           {/* Reset Test Bookings Button */}
           <button
+            className="admin-reset-btn"
             onClick={() => {
               if (window.confirm('Reset all test bookings and restore initial hotel state?')) {
                 resetStore();

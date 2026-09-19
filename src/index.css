@@ -834,3 +834,266 @@ html.dark .hero-section {
     text-align: center;
   }
 }
+
+/* ============================================================
+   ADMIN PORTAL RESPONSIVE — Phones / Tablets / iPads / Laptops
+   Admin layouts use inline styles in JSX, so !important is used
+   to override them at each breakpoint.
+   ============================================================ */
+
+/* Hide scrollbar on the horizontally-scrollable tab bar */
+.admin-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---------- ≤1024px : small laptops & large tablets ---------- */
+@media (max-width: 1024px) {
+  .receipt-split,
+  .event-split,
+  .analytics-split {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .occupancy-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+  }
+
+  .admin-greeting-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+}
+
+/* ---------- ≤900px : tablets & iPads (portrait) ---------- */
+@media (max-width: 900px) {
+  /* Collapse all admin 2-column splits to a single column */
+  .receipt-split,
+  .event-split,
+  .analytics-split {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Receipt detail panel no longer needs to stick on scroll */
+  .receipt-split > div {
+    position: static !important;
+  }
+
+  .walkin-form-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  .admin-main {
+    padding: 1.25rem 1rem !important;
+  }
+
+  .admin-summary-stats {
+    flex-wrap: wrap !important;
+    gap: 0.5rem 1rem !important;
+  }
+}
+
+/* ---------- ≤768px : tablets portrait & large phones ---------- */
+@media (max-width: 768px) {
+  /* Navbar: stack brand above staff controls */
+  .admin-navbar-inner {
+    padding: 0.7rem 1rem !important;
+    gap: 0.7rem !important;
+  }
+
+  .admin-navbar-actions {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    gap: 0.6rem !important;
+  }
+
+  .admin-user-chip {
+    flex: 1 1 auto !important;
+    min-width: 200px !important;
+  }
+
+  .admin-toolbar {
+    padding: 1rem !important;
+  }
+
+  .admin-search {
+    min-width: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+    flex-basis: 100% !important;
+  }
+
+  .walkin-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-greeting-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    width: 100% !important;
+  }
+
+  .admin-greeting-actions button {
+    width: 100% !important;
+    justify-content: center !important;
+    white-space: normal !important;
+  }
+
+  .audit-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.3rem !important;
+  }
+
+  .login-card {
+    padding: 1.75rem 1.5rem !important;
+  }
+
+  /* Booking & walk-in modals go portrait (single column) */
+  .booking-form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  .book-suite-modal,
+  .walkin-modal {
+    width: 94% !important;
+    max-height: 88vh !important;
+    overflow-y: auto !important;
+    padding: 1.5rem 1.25rem !important;
+  }
+}
+
+/* ---------- ≤520px : phones ---------- */
+@media (max-width: 520px) {
+  .admin-main {
+    padding: 1rem 0.85rem !important;
+  }
+
+  .admin-summary-inner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .admin-summary-stats {
+    font-size: 0.75rem !important;
+  }
+
+  /* Toolbar buttons go full-width for easy tapping */
+  .admin-toolbar .btn-gold {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .admin-toolbar .btn-outline {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+  }
+
+  .admin-greeting-actions {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Receipt cards: single column, tighter padding */
+  .receipt-detail-grid {
+    gap: 0.6rem !important;
+    padding: 0.85rem !important;
+  }
+
+  .walkin-mini-grid,
+  .event-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Room cards: one per row for readability */
+  .occupancy-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Calendar day cells: slimmer on small phones */
+  .event-split > div:first-child {
+    padding: 0.85rem !important;
+  }
+
+  /* Staff rows wrap instead of squeezing */
+  .staff-row {
+    flex-wrap: wrap !important;
+    padding: 0.9rem 1rem !important;
+    gap: 0.7rem !important;
+  }
+
+  /* Audit log rows stack */
+  .audit-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.4rem !important;
+  }
+
+  /* Admin tab bar: compact, scrollable pills */
+  .admin-tabs {
+    gap: 0.4rem !important;
+  }
+
+  .admin-tabs button {
+    padding: 0.5rem 0.8rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  .login-card {
+    padding: 1.5rem 1.25rem !important;
+  }
+
+  /* ---------- Phone portrait modals ---------- */
+  .modal-overlay {
+    padding: 0.75rem !important;
+    align-items: flex-start !important;
+  }
+
+  .modal-content {
+    margin-top: auto !important;
+    margin-bottom: auto !important;
+  }
+
+  /* Close (X) tucked into the top-right corner of the card */
+  .modal-close {
+    top: 0.55rem !important;
+    right: 0.55rem !important;
+    padding: 0.35rem !important;
+    line-height: 1 !important;
+    z-index: 2 !important;
+  }
+
+  /* Booking & walk-in cards: full-width portrait, internal scroll */
+  .book-suite-modal,
+  .walkin-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 92vh !important;
+    overflow-y: auto !important;
+    padding: 1.25rem 1rem 1.25rem !important;
+  }
+
+  /* Keep titles clear of the corner close button */
+  .book-suite-modal h3,
+  .walkin-modal h3 {
+    padding-right: 2.2rem !important;
+    font-size: 1.15rem !important;
+  }
+
+  /* Stack the small side-by-side input pairs */
+  .booking-mini-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Stack booking modal action buttons full-width */
+  .booking-actions {
+    flex-direction: column !important;
+  }
+
+  .booking-actions button {
+    width: 100% !important;
+    white-space: normal !important;
+  }
+}

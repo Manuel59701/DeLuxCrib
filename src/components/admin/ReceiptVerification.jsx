@@ -141,7 +141,7 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
       {/* Top Header & Search Bar */}
-      <div style={{
+      <div className="admin-toolbar" style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -153,7 +153,7 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
         borderRadius: '4px'
       }}>
         {/* Search */}
-        <div style={{ position: 'relative', flex: 1, minWidth: '280px', maxWidth: '500px' }}>
+        <div className="admin-search" style={{ position: 'relative', flex: 1, minWidth: '280px', maxWidth: '500px' }}>
           <Search size={16} className="text-gold" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
@@ -197,7 +197,7 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
       )}
 
       {/* 2-Column Split: Booking List & Selected Receipt Panel */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '1.2rem', alignItems: 'start' }}>
+      <div className="receipt-split" style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '1.2rem', alignItems: 'start' }}>
         {/* Left: Receipts List */}
         <div style={{
           backgroundColor: 'var(--card-bg)',
@@ -300,7 +300,7 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
             </div>
 
             {/* Details Table */}
-            <div style={{
+            <div className="receipt-detail-grid" style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
               gap: '0.8rem',
@@ -414,7 +414,7 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
       {showWalkinModal && (
         <div className="modal-overlay" onClick={() => setShowWalkinModal(false)}>
           <div
-            className="modal-content"
+            className="modal-content walkin-modal"
             onClick={(e) => e.stopPropagation()}
             style={{
               maxWidth: '820px',
@@ -447,7 +447,7 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
 
             <form onSubmit={handleWalkinSubmit}>
               {/* 2-Column Landscape Split */}
-              <div style={{
+              <div className="walkin-form-grid" style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
                 gap: '1.5rem',
@@ -528,7 +528,7 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
                   </div>
 
                   {/* Phone & Check-In Date */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '0.6rem' }}>
+                  <div className="walkin-mini-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '0.6rem' }}>
                     <div>
                       <label className="form-label" style={{ fontSize: '0.75rem' }}>Phone Number</label>
                       <input

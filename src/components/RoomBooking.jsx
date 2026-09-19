@@ -447,7 +447,7 @@ export default function RoomBooking() {
         {isFormModalOpen && selectedRoom && (
           <div className="modal-overlay" onClick={() => setIsFormModalOpen(false)}>
             <div
-              className="modal-content"
+              className="modal-content book-suite-modal"
               onClick={(e) => e.stopPropagation()}
               style={{
                 maxWidth: '820px',
@@ -482,7 +482,7 @@ export default function RoomBooking() {
 
               <form onSubmit={handleBookingSubmit}>
                 {/* 2-Column Landscape Split */}
-                <div style={{
+                <div className="booking-form-grid" style={{
                   display: 'grid',
                   gridTemplateColumns: '1.1fr 1fr',
                   gap: '1.5rem',
@@ -512,7 +512,7 @@ export default function RoomBooking() {
                       )}
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.7rem' }}>
+                    <div className="booking-mini-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.7rem' }}>
                       <div>
                         <label className="form-label" htmlFor="guest-email" style={{ fontSize: '0.75rem' }}>Email Address</label>
                         <input
@@ -539,7 +539,7 @@ export default function RoomBooking() {
                       </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '0.7rem' }}>
+                    <div className="booking-mini-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '0.7rem' }}>
                       <div>
                         <label className="form-label" htmlFor="check-in-date" style={{ fontSize: '0.75rem' }}>
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -640,7 +640,7 @@ export default function RoomBooking() {
                     </div>
 
                     {/* Action Buttons */}
-                    <div style={{ display: 'flex', gap: '0.6rem' }}>
+                    <div className="booking-actions" style={{ display: 'flex', gap: '0.6rem' }}>
                       <button
                         type="button"
                         onClick={() => setIsFormModalOpen(false)}

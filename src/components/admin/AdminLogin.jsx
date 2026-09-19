@@ -94,7 +94,7 @@ export default function AdminLogin({ onLoginSuccess, onExit }) {
         &larr; Back to Guest Site
       </a>
 
-      <div style={{
+      <div className="login-card" style={{
         maxWidth: '480px',
         width: '100%',
         backgroundColor: 'var(--card-bg)',

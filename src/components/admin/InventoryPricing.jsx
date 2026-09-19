@@ -60,7 +60,7 @@ export default function InventoryPricing({ store, user, onRefresh }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Header */}
-      <div style={{
+      <div className="admin-toolbar" style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',

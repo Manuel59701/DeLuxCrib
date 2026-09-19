@@ -66,7 +66,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, userRole }) {
       padding: '0.6rem 1.5rem',
       boxShadow: 'var(--shadow-sm)'
     }}>
-      <div style={{
+      <div className="admin-tabs" style={{
         maxWidth: '1280px',
         margin: '0 auto',
         display: 'flex',

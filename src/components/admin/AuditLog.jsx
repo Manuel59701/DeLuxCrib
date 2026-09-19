@@ -12,7 +12,7 @@ export default function AuditLog({ store }) {
       padding: '1.5rem',
       boxShadow: 'var(--shadow-sm)'
     }}>
-      <div style={{
+      <div className="audit-header" style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -32,6 +32,7 @@ export default function AuditLog({ store }) {
         {logs.map((log) => (
           <div
             key={log.id}
+            className="audit-row"
             style={{
               padding: '0.8rem 1.2rem',
               backgroundColor: 'var(--bg-secondary)',

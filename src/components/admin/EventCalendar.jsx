@@ -103,7 +103,7 @@ export default function EventCalendar({ store, user, onRefresh }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
       {/* Top Controls */}
-      <div style={{
+      <div className="admin-toolbar" style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -148,7 +148,7 @@ export default function EventCalendar({ store, user, onRefresh }) {
       )}
 
       {/* 2-Column Split: Calendar Matrix & Upcoming Events List */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '1.2rem' }}>
+      <div className="event-split" style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '1.2rem' }}>
         {/* Calendar Grid */}
         <div style={{
           backgroundColor: 'var(--card-bg)',
@@ -315,7 +315,7 @@ export default function EventCalendar({ store, user, onRefresh }) {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="event-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label className="form-label">Event Date</label>
                   <input

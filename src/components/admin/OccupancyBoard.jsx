@@ -37,7 +37,7 @@ export default function OccupancyBoard({ store, user, onRefresh }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
       {/* Quick Summary & Floor Tabs */}
-      <div style={{
+      <div className="admin-toolbar" style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -49,7 +49,7 @@ export default function OccupancyBoard({ store, user, onRefresh }) {
         borderRadius: '4px'
       }}>
         {/* Floor Filter Tabs */}
-        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+        <div className="floor-tabs" style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
           {[
             { id: 'all', label: 'All Rooms' },
             { id: '1', label: 'Floor 1 (Deluxe)' },
@@ -104,7 +104,7 @@ export default function OccupancyBoard({ store, user, onRefresh }) {
               Floor 0{floor} &bull; {floorRooms[0]?.type}
             </h3>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1rem' }}>
+            <div className="occupancy-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1rem' }}>
               {floorRooms.map(room => {
                 const statusObj = STATUSES.find(s => s.id === room.status) || STATUSES[0];
                 const Icon = statusObj.icon;

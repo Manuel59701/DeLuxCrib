@@ -133,7 +133,7 @@ export default function AdminPage({ onExit }) {
         padding: '0.6rem 1.5rem',
         fontSize: '0.8rem'
       }}>
-        <div style={{
+        <div className="admin-summary-inner" style={{
           maxWidth: '1280px',
           margin: '0 auto',
           display: 'flex',
@@ -142,7 +142,7 @@ export default function AdminPage({ onExit }) {
           flexWrap: 'wrap',
           gap: '0.8rem'
         }}>
-          <div style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
+          <div className="admin-summary-stats" style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
             <span>🏢 Occupancy: <strong className="text-gold">{Math.round((occupiedCount / totalRooms) * 100)}% ({occupiedCount}/{totalRooms} Rooms)</strong></span>
             <span>🧾 Pending Payments: <strong style={{ color: pendingReceipts > 0 ? '#eab308' : '#22c55e' }}>{pendingReceipts}</strong></span>
             <span>📅 Upcoming Events: <strong>{upcomingEvents}</strong></span>
@@ -158,12 +158,12 @@ export default function AdminPage({ onExit }) {
       </div>
 
       {/* Main Content Area */}
-      <main style={{ flex: 1, padding: '1.5rem', maxWidth: '1280px', width: '100%', margin: '0 auto' }}>
+      <main className="admin-main" style={{ flex: 1, padding: '1.5rem', maxWidth: '1280px', width: '100%', margin: '0 auto' }}>
         {/* ================= ADMIN OVERVIEW TAB ================= */}
         {activeTab === 'overview' && currentUser.role === 'admin' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {/* Greeting */}
-            <div style={{
+            <div className="admin-greeting-card" style={{
               backgroundColor: 'var(--card-bg)',
               border: '1px solid var(--border-gold)',
               padding: '1.5rem',
@@ -186,7 +186,7 @@ export default function AdminPage({ onExit }) {
                 </p>
               </div>
 
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <div className="admin-greeting-actions" style={{ display: 'flex', gap: '0.5rem' }}>
                 <button onClick={() => setActiveTab('receipts')} className="btn-gold" style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}>
                   Verify Receipts
                 </button>
