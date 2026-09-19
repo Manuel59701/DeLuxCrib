@@ -37,18 +37,6 @@ export default function AdminNavbar({ user, onLogout, onExit, darkMode, toggleDa
             }}>
               DE LUX <span className="text-gold">CRIB</span>
             </span>
-            <span style={{
-              backgroundColor: 'var(--text-primary)',
-              color: 'var(--bg-primary)',
-              fontSize: '0.65rem',
-              fontWeight: '700',
-              padding: '0.2rem 0.5rem',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-              borderRadius: '2px'
-            }}>
-              PMS PORTAL
-            </span>
           </a>
 
           {/* Quick link to guest website */}
