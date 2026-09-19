@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Building2, 
   CheckCircle, 
   User, 
   Sparkles, 
   Wrench,
-  X
+  X,
+  ArrowUpDown,
+  CalendarArrowUp,
+  CalendarArrowDown,
+  CalendarDays,
+  CalendarX2
 } from 'lucide-react';
 import { updateRoomStatus } from '../../utils/dataStore';
 
@@ -20,6 +25,22 @@ export default function OccupancyBoard({ store, user, onRefresh }) {
   const [activeFloor, setActiveFloor] = useState('all');
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [notice, setNotice] = useState(null);
+  const [sortDir, setSortDir] = useState(null); // null | 'asc' | 'desc'
+  const [filterDate, setFilterDate] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const bookingsSorted = useMemo(() => {
+    let list = [...(store.bookings || [])];
+    if (filterDate) {
+      list = list.filter(b => (b.date || b.checkIn || '').slice(0, 10) === filterDate);
+    }
+    if (!sortDir) return list;
+    return list.sort((a, b) => {
+      const da = new Date(a.date || a.checkIn || 0).getTime();
+      const db = new Date(b.date || b.checkIn || 0).getTime();
+      return sortDir === 'asc' ? da - db : db - da;
+    });
+  }, [store.bookings, sortDir, filterDate]);
 
   const rooms = store.rooms || {};
   const allRooms = Object.values(rooms).flat();
@@ -77,7 +98,59 @@ export default function OccupancyBoard({ store, user, onRefresh }) {
         </div>
 
         {/* Quick Counts */}
-        <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem' }}>
+        <div style={{ display: 'flex', gap: '0.8rem', fontSize: '0.8rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setSortDir(prev => (prev === null ? 'asc' : prev === 'asc' ? 'desc' : null))}
+            title="Sort bookings by check-in date"
+            style={{
+              padding: '0.4rem 0.8rem',
+              fontSize: '0.75rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              border: sortDir ? '1px solid var(--color-gold)' : '1px solid var(--border-color)',
+              backgroundColor: sortDir ? 'var(--bg-tertiary)' : 'transparent',
+              color: sortDir ? 'var(--color-gold)' : 'var(--text-secondary)',
+              fontWeight: sortDir ? 'bold' : 'normal'
+            }}
+          >
+            {sortDir === 'asc' ? <CalendarArrowUp size={14} /> : sortDir === 'desc' ? <CalendarArrowDown size={14} /> : <ArrowUpDown size={14} />}
+            {sortDir === 'asc' ? 'Check-in: Oldest First' : sortDir === 'desc' ? 'Check-in: Newest First' : 'Sort by Check-in Date'}
+          </button>
+          <button
+            onClick={() => setShowDatePicker(prev => !prev)}
+            title="Filter by specific check-in date"
+            style={{
+              padding: '0.4rem 0.7rem',
+              fontSize: '0.75rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              border: (showDatePicker || filterDate) ? '1px solid var(--color-gold)' : '1px solid var(--border-color)',
+              backgroundColor: (showDatePicker || filterDate) ? 'var(--bg-tertiary)' : 'transparent',
+              color: (showDatePicker || filterDate) ? 'var(--color-gold)' : 'var(--text-secondary)',
+              fontWeight: (showDatePicker || filterDate) ? 'bold' : 'normal'
+            }}
+          >
+            <CalendarDays size={14} />
+            {filterDate || 'Pick a Date'}
+            {filterDate && (
+              <span
+                role="button"
+                tabIndex={0}
+                onClick={(e) => { e.stopPropagation(); setFilterDate(''); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') setFilterDate(''); }}
+                title="Clear date filter"
+                style={{ display: 'inline-flex', alignItems: 'center' }}
+              >
+                <CalendarX2 size={13} />
+              </span>
+            )}
+          </button>
           <span style={{ color: '#22c55e', fontWeight: 'bold' }}>● {vacantCount} Vacant</span>
           <span style={{ color: 'var(--color-gold)', fontWeight: 'bold' }}>● {occupiedCount} Occupied</span>
           <span style={{ color: 'var(--text-muted)' }}>({allRooms.length} Total Rooms)</span>
@@ -89,6 +162,58 @@ export default function OccupancyBoard({ store, user, onRefresh }) {
           ✓ {notice}
         </div>
       )}
+
+      {/* Bookings ordered by check-in date (Front Desk) */}
+      {showDatePicker && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.6rem',
+          backgroundColor: 'var(--card-bg)',
+          padding: '0.7rem 1.2rem',
+          border: '1px solid var(--border-color)',
+          borderRadius: '4px',
+          fontSize: '0.8rem'
+        }}>
+          <CalendarDays size={15} style={{ color: 'var(--color-gold)' }} />
+          <label style={{ fontWeight: 'bold' }}>Check-in date:</label>
+          <input
+            type="date"
+            value={filterDate}
+            onChange={(e) => setFilterDate(e.target.value)}
+            style={{ maxWidth: '200px', padding: '0.4rem 0.6rem', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)' }}
+          />
+          {filterDate && (
+            <button onClick={() => setFilterDate('')} style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', borderRadius: '4px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+              Clear
+            </button>
+          )}
+          <span style={{ color: 'var(--text-muted)' }}>
+            {filterDate ? `Showing bookings for ${filterDate} (${bookingsSorted.length})` : 'Pick a date to filter bookings'}
+          </span>
+        </div>
+      )}
+      <div style={{
+        backgroundColor: 'var(--card-bg)',
+        border: '1px solid var(--border-color)',
+        borderRadius: '4px',
+        overflow: 'hidden'
+      }}>
+        <div style={{ padding: '0.7rem 1.2rem', backgroundColor: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)', fontSize: '0.8rem', fontWeight: 'bold' }}>
+          Front Desk Bookings by Check-in Date ({bookingsSorted.length}){sortDir ? (sortDir === 'asc' ? ' · Oldest → Newest' : ' · Newest → Oldest') : ''}
+        </div>
+        <div style={{ maxHeight: '220px', overflowY: 'auto' }}>
+          {bookingsSorted.map(b => (
+            <div key={b.receiptNo} style={{ padding: '0.55rem 1.2rem', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem' }}>
+              <span><strong style={{ color: 'var(--color-gold)', fontFamily: 'monospace' }}>{b.receiptNo}</strong> · {b.guestName} · Room {b.roomNumber}</span>
+              <span style={{ color: 'var(--text-muted)' }}>Check-in: {b.date || b.checkIn || '—'} ({b.nights} night{b.nights > 1 ? 's' : ''})</span>
+            </div>
+          ))}
+          {bookingsSorted.length === 0 && (
+            <div style={{ padding: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center' }}>No bookings found.</div>
+          )}
+        </div>
+      </div>
 
       {/* Floors & Room Cards */}
       {Object.entries(rooms)

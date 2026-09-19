@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Search, 
   FileCheck2, 
@@ -12,7 +12,12 @@ import {
   X,
   Building2,
   Banknote,
-  Smartphone
+  Smartphone,
+  ArrowUpDown,
+  CalendarArrowUp,
+  CalendarArrowDown,
+  CalendarDays,
+  CalendarX2
 } from 'lucide-react';
 import { 
   verifyReceiptPayment, 
@@ -27,6 +32,9 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
   const [selectedReceipt, setSelectedReceipt] = useState(() => store.bookings?.[0] || null);
   const [showWalkinModal, setShowWalkinModal] = useState(false);
   const [notice, setNotice] = useState(null);
+  const [sortDir, setSortDir] = useState(null); // null | 'asc' | 'desc'
+  const [filterDate, setFilterDate] = useState(''); // YYYY-MM-DD exact check-in date filter
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   // Walk-in form state with Floor, Room & Payment Confirmation
   const [walkinFloor, setWalkinFloor] = useState('1');
@@ -43,16 +51,32 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
 
   const bookings = store.bookings || [];
 
-  // Filter bookings by receipt number or name
-  const filtered = bookings.filter(b => {
+  // Filter bookings by receipt number or name, by specific check-in date, then optionally sort
+  const filtered = useMemo(() => {
     const q = searchTerm.toLowerCase().trim();
-    if (!q) return true;
-    return (
-      b.receiptNo?.toLowerCase().includes(q) ||
-      b.guestName?.toLowerCase().includes(q) ||
-      b.roomNumber?.toLowerCase().includes(q)
-    );
-  });
+    const list = bookings.filter(b => {
+      if (filterDate) {
+        const d = (b.date || b.checkIn || '').slice(0, 10);
+        if (d !== filterDate) return false;
+      }
+      if (!q) return true;
+      return (
+        b.receiptNo?.toLowerCase().includes(q) ||
+        b.guestName?.toLowerCase().includes(q) ||
+        b.roomNumber?.toLowerCase().includes(q)
+      );
+    });
+    if (!sortDir) return list;
+    return [...list].sort((a, b) => {
+      const da = new Date(a.date || a.checkIn || 0).getTime();
+      const db = new Date(b.date || b.checkIn || 0).getTime();
+      return sortDir === 'asc' ? da - db : db - da;
+    });
+  }, [bookings, searchTerm, sortDir, filterDate]);
+
+  const toggleSort = () => {
+    setSortDir(prev => (prev === null ? 'asc' : prev === 'asc' ? 'desc' : null));
+  };
 
   const handleFloorChange = (newFloor) => {
     setWalkinFloor(newFloor);
@@ -166,6 +190,59 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
         </div>
 
         {/* Walk-in Button */}
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <button
+          onClick={toggleSort}
+          title="Sort bookings by check-in date"
+          style={{
+            padding: '0.6rem 1rem',
+            fontSize: '0.8rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            borderRadius: '2px',
+            cursor: 'pointer',
+            border: sortDir ? '1px solid var(--color-gold)' : '1px solid var(--border-color)',
+            backgroundColor: sortDir ? 'var(--bg-tertiary)' : 'transparent',
+            color: sortDir ? 'var(--color-gold)' : 'var(--text-secondary)',
+            fontWeight: sortDir ? 'bold' : 'normal'
+          }}
+        >
+          {sortDir === 'asc' ? <CalendarArrowUp size={16} /> : sortDir === 'desc' ? <CalendarArrowDown size={16} /> : <ArrowUpDown size={16} />}
+          {sortDir === 'asc' ? 'Check-in: Oldest First' : sortDir === 'desc' ? 'Check-in: Newest First' : 'Sort by Check-in Date'}
+        </button>
+        <button
+          onClick={() => setShowDatePicker(prev => !prev)}
+          title="Filter by specific check-in date"
+          style={{
+            padding: '0.6rem 0.8rem',
+            fontSize: '0.8rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            borderRadius: '2px',
+            cursor: 'pointer',
+            border: (showDatePicker || filterDate) ? '1px solid var(--color-gold)' : '1px solid var(--border-color)',
+            backgroundColor: (showDatePicker || filterDate) ? 'var(--bg-tertiary)' : 'transparent',
+            color: (showDatePicker || filterDate) ? 'var(--color-gold)' : 'var(--text-secondary)',
+            fontWeight: (showDatePicker || filterDate) ? 'bold' : 'normal'
+          }}
+        >
+          <CalendarDays size={16} />
+          {filterDate || 'Pick a Date'}
+          {filterDate && (
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={(e) => { e.stopPropagation(); setFilterDate(''); }}
+              onKeyDown={(e) => { if (e.key === 'Enter') setFilterDate(''); }}
+              title="Clear date filter"
+              style={{ display: 'inline-flex', alignItems: 'center', marginLeft: '0.2rem' }}
+            >
+              <CalendarX2 size={14} />
+            </span>
+          )}
+        </button>
         <button
           onClick={() => {
             const firstVacant = (store.rooms?.[walkinFloor] || []).find(r => r.status === 'vacant');
@@ -179,7 +256,39 @@ export default function ReceiptVerification({ store, user, onRefresh }) {
         >
           <Plus size={16} /> New Walk-In Check-In
         </button>
+        </div>
       </div>
+
+      {showDatePicker && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.6rem',
+          backgroundColor: 'var(--card-bg)',
+          padding: '0.7rem 1.2rem',
+          border: '1px solid var(--border-color)',
+          borderRadius: '4px',
+          fontSize: '0.8rem'
+        }}>
+          <CalendarDays size={16} className="text-gold" />
+          <label style={{ fontWeight: 'bold' }}>Check-in date:</label>
+          <input
+            type="date"
+            className="form-input"
+            value={filterDate}
+            onChange={(e) => setFilterDate(e.target.value)}
+            style={{ maxWidth: '200px', padding: '0.4rem 0.6rem', fontSize: '0.8rem' }}
+          />
+          {filterDate && (
+            <button className="btn-outline" onClick={() => setFilterDate('')} style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem' }}>
+              Clear
+            </button>
+          )}
+          <span style={{ color: 'var(--text-muted)' }}>
+            {filterDate ? `Showing bookings for ${filterDate} (${filtered.length})` : 'Pick a date to filter bookings'}
+          </span>
+        </div>
+      )}
 
       {/* Notice Message */}
       {notice && (
